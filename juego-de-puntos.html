@@ -1,699 +1,530 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Juego de Puntos</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #08080f; color: #f0f0f0; font-family: 'Syne','Barlow',system-ui,sans-serif; }
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    input[type=number] { -moz-appearance: textfield; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Juego de Puntos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#08080f;color:#f0f0f0;font-family:'Syne',system-ui,sans-serif;min-height:100vh;padding-bottom:80px}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield}
+button{font-family:'Syne',system-ui,sans-serif;cursor:pointer}
+input{font-family:'Syne',system-ui,sans-serif}
+.header{background:linear-gradient(160deg,#0f0f1e,#14141f);border-bottom:1px solid #1e1e2e;padding:20px 18px 14px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;max-width:580px;margin-left:auto;margin-right:auto}
+.app-sub{font-size:10px;letter-spacing:4px;color:#444;text-transform:uppercase}
+.app-title{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1.1}
+.header-btns{display:flex;gap:7px}
+.lang-btn{background:#1a1a2e;border:1px solid #2a2a3e;color:#888;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700}
+.reset-btn{background:none;border:1px solid #2a2a3e;color:#555;border-radius:8px;padding:5px 10px;font-size:11px}
+.tabs{display:flex;gap:6px;max-width:580px;margin:0 auto}
+.tab{flex:1;padding:8px 4px;border-radius:10px;border:none;font-size:11px;font-weight:700;letter-spacing:.3px;transition:all .2s}
+.tab.active{background:#f0f0f0;color:#08080f}
+.tab.inactive{background:#141428;color:#555}
+.content{max-width:580px;margin:0 auto;padding:18px 16px}
+.section-label{font-size:10px;letter-spacing:3px;color:#444;margin-bottom:8px}
+.group-card{background:#0f0f1a;border-radius:16px;overflow:hidden;margin-bottom:10px;transition:box-shadow .3s}
+.group-header{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px}
+.group-name{font-weight:800;font-size:15px}
+.group-score{font-weight:900;font-size:20px;letter-spacing:-1px}
+.bar-bg{height:3px;background:#1e1e2e;border-radius:99px;overflow:hidden;margin-top:7px}
+.bar-fill{height:100%;border-radius:99px;transition:width .5s}
+.group-members{border-top:1px solid #1a1a2a;padding:10px 18px 14px}
+.member-row{display:flex;align-items:center;gap:8px;padding:10px 8px;border-bottom:1px solid #141428;border-radius:10px;transition:background .15s}
+.member-name{font-size:13px;font-weight:700}
+.member-pts{font-weight:900;font-size:20px;letter-spacing:-1px}
+.player-card{background:#0f0f1a;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.player-name{font-weight:700;font-size:14px}
+.player-group{font-size:10px;opacity:.7;margin-top:1px}
+.player-pts{font-weight:900;font-size:22px;letter-spacing:-1px}
+.medal{font-size:18px;flex-shrink:0}
+.rank{font-size:12px;color:#444;font-weight:700;min-width:22px;text-align:center;flex-shrink:0}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);display:flex;align-items:center;justify-content:center;z-index:400;padding:16px}
+.overlay.bottom{align-items:flex-end}
+.modal{background:#0f0f1a;border-radius:24px;padding:28px 22px;max-width:310px;width:100%;text-align:center}
+.modal-bottom{background:#0f0f1a;border-radius:24px;padding:26px 22px;max-width:360px;width:100%}
+.modal-icon{font-size:28px;margin-bottom:6px}
+.modal-title{font-weight:800;font-size:18px;margin-bottom:4px;color:#f0f0f0}
+.modal-sub{font-size:11px;color:#666;margin-bottom:18px;min-height:16px}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
+.pin-dot{width:13px;height:13px;border-radius:50%;transition:all .15s}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.numpad-btn{padding:15px 0;border-radius:12px;border:1px solid #2a2a3a;font-size:19px;font-weight:700;color:#f0f0f0;background:#1a1a2a}
+.numpad-btn.del{color:#f87171;background:#1e1e2e}
+.numpad-btn.empty{background:transparent;border:none;cursor:default;opacity:0}
+.cancel-btn{background:none;border:none;color:#555;font-size:12px;padding:4px 8px}
+.pts-label{font-size:11px;letter-spacing:2px;color:#555;margin-bottom:4px}
+.pts-big{font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1}
+.pts-name{font-size:14px;font-weight:700;color:#ccc;margin-top:6px}
+.pts-controls{display:flex;align-items:stretch;gap:8px;margin-bottom:14px}
+.pts-btn{width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;transition:all .15s}
+.pts-input{flex:1;text-align:center;background:#141428;border-radius:14px;font-size:24px;font-weight:900;height:64px;outline:none;padding:0 8px;min-width:0}
+.done-btn{width:100%;padding:13px;border-radius:14px;border:1px solid #2a2a3a;background:none;color:#555;font-size:13px;font-weight:600}
+.manage-card{background:#0f0f1a;border-radius:16px;border:1px solid #1a1a2a;overflow:hidden;margin-bottom:10px}
+.manage-header{padding:13px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.manage-body{border-top:1px solid #141428;padding:10px 16px 14px}
+.manage-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid #141428}
+.sm-btn{border:none;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:700;flex-shrink:0}
+.pts-direct{width:60px;text-align:center;background:#141428;border-radius:8px;font-weight:800;font-size:14px;outline:none;padding:5px 4px}
+.add-row{display:flex;gap:7px;margin-top:10px}
+.add-input{flex:1;background:#141428;border:1px solid #2a2a3a;border-radius:10px;color:#f0f0f0;font-size:12px;outline:none;padding:8px 12px}
+.add-btn{border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700}
+.chevron{color:#333;font-size:11px}
+.pin-show-box{border-radius:16px;padding:18px 0;margin-bottom:20px}
+.pin-show-num{font-size:48px;font-weight:900;letter-spacing:16px}
+.pin-warn{font-size:11px;color:#f87171;margin-bottom:24px;line-height:1.6}
+.confirm-ok{width:100%;padding:14px;border-radius:14px;border:none;font-size:14px;font-weight:800;color:#000}
+.reset-confirm-modal{background:#0f0f1a;border:1px solid rgba(248,113,113,.27);border-radius:22px;padding:26px;max-width:300px;width:100%;text-align:center}
+.reset-icon{font-size:34px;margin-bottom:10px}
+.reset-title{font-weight:800;font-size:17px;margin-bottom:6px}
+.reset-sub{font-size:12px;color:#666;margin-bottom:22px}
+.reset-btns{display:flex;gap:8px}
+.reset-cancel{flex:1;padding:12px;border-radius:12px;border:1px solid #2a2a3a;background:none;color:#888;font-size:13px;font-weight:600}
+.reset-ok{flex:1;padding:12px;border-radius:12px;border:none;background:#f87171;color:#fff;font-size:13px;font-weight:800}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+@keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{transform:translateY(36px);opacity:0}to{transform:translateY(0);opacity:1}}
+.anim-pop{animation:pop .25s}
+.anim-shake{animation:shk .6s}
+.anim-slide{animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script type="text/babel">
 
-// ─── i18n ─────────────────────────────────────────────────────────────────────
-const LANG = {
-  es: {
-    title: "JUEGO DE PUNTOS", sub: "Scouts",
-    tabs: ["Grupos", "Individual", "🔒 Gestionar"],
-    reset: "👑 Reset",
-    topGroups: "RANKING DE GRUPOS", topPlayers: "RANKING INDIVIDUAL",
-    manageTitle: "GESTIONAR",
-    tapName: "TOCA UN NOMBRE PARA EDITAR SUS PUNTOS",
-    pinSet: "🔒 PIN activo", noPin: "Sin PIN aún",
-    yourPoints: "PUNTOS", done: "Listo ✓", cancel: "Cancelar",
-    createPin: "Crear PIN de Juez", confirmPin: "Confirmar PIN",
-    enterPin: "Acceso de Juez",
-    pinSub1: "Primera vez — crea un PIN de 4 dígitos",
-    pinSub2: "Repite el PIN para confirmar",
-    pinSub3: "Ingresa el PIN de juez",
-    pinShowSub: "Anota este PIN, lo necesitarás siempre.",
-    pinShowWarning: "Guarda este número. No podrás recuperarlo si lo olvidas.",
-    pinShowConfirm: "Ya lo anoté, continuar ✓",
-    mismatch: "Los PINs no coinciden.", wrong: "PIN incorrecto.",
-    managePinTitle: "Acceso de Juez", managePinSub: "Solo el juez puede gestionar",
-    resetTitle: "Acceso Admin", resetSub: "PIN de administrador",
-    resetConfirm: "¿Reiniciar TODO?", resetConfirmSub: "Se borran todos los puntos.",
-    yesReset: "Sí, reiniciar",
-    addMember: "Nuevo integrante...", add: "Agregar",
-  },
-  pt: {
-    title: "JOGO DE PONTOS", sub: "Escoteiros",
-    tabs: ["Grupos", "Individual", "🔒 Gerenciar"],
-    reset: "👑 Reset",
-    topGroups: "RANKING DE GRUPOS", topPlayers: "RANKING INDIVIDUAL",
-    manageTitle: "GERENCIAR",
-    tapName: "TOQUE UM NOME PARA EDITAR SEUS PONTOS",
-    pinSet: "🔒 PIN ativo", noPin: "Sem PIN ainda",
-    yourPoints: "PONTOS", done: "Pronto ✓", cancel: "Cancelar",
-    createPin: "Criar PIN do Juiz", confirmPin: "Confirmar PIN",
-    enterPin: "Acesso do Juiz",
-    pinSub1: "Primeira vez — crie um PIN de 4 dígitos",
-    pinSub2: "Repita o PIN para confirmar",
-    pinSub3: "Insira o PIN do juiz",
-    pinShowSub: "Anote este PIN, você precisará dele sempre.",
-    pinShowWarning: "Guarde este número. Não poderá recuperá-lo se esquecer.",
-    pinShowConfirm: "Já anotei, continuar ✓",
-    mismatch: "Os PINs não coincidem.", wrong: "PIN incorreto.",
-    managePinTitle: "Acesso do Juiz", managePinSub: "Só o juiz pode gerenciar",
-    resetTitle: "Acesso Admin", resetSub: "PIN de administrador",
-    resetConfirm: "Reiniciar TUDO?", resetConfirmSub: "Todos os pontos serão apagados.",
-    yesReset: "Sim, reiniciar",
-    addMember: "Novo integrante...", add: "Adicionar",
-  },
-};
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="app-sub" id="appSub">Scouts</div>
+      <div class="app-title" id="appTitle">JUEGO DE PUNTOS</div>
+    </div>
+    <div class="header-btns">
+      <button class="lang-btn" onclick="toggleLang()" id="langBtn">PT</button>
+      <button class="reset-btn" onclick="showResetPin()">👑 Reset</button>
+    </div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+</div>
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+<div class="content" id="content"></div>
+
+<!-- PIN Modal -->
+<div class="overlay" id="pinOverlay" style="display:none">
+  <div class="modal anim-pop" id="pinModal">
+    <div class="modal-icon" id="pinIcon"></div>
+    <div class="modal-title" id="pinTitle"></div>
+    <div class="modal-sub" id="pinSub"></div>
+    <div class="pin-dots" id="pinDots"></div>
+    <div id="pinError" style="font-size:11px;color:#f87171;margin-bottom:10px;min-height:14px"></div>
+    <div class="numpad" id="numpad"></div>
+    <button class="cancel-btn" id="pinCancelBtn" onclick="closePinModal()"></button>
+  </div>
+</div>
+
+<!-- PIN Show Modal -->
+<div class="overlay" id="pinShowOverlay" style="display:none">
+  <div class="modal anim-pop" id="pinShowModal">
+    <div style="font-size:32px;margin-bottom:10px">🔑</div>
+    <div class="modal-title">Tu PIN de Admin</div>
+    <div class="modal-sub" id="pinShowSub"></div>
+    <div class="pin-show-box" id="pinShowBox">
+      <div class="pin-show-num" id="pinShowNum"></div>
+    </div>
+    <div class="pin-warn" id="pinShowWarn"></div>
+    <button class="confirm-ok" id="pinShowConfirmBtn" onclick="confirmPinShown()"></button>
+  </div>
+</div>
+
+<!-- Points Panel -->
+<div class="overlay bottom" id="ptsOverlay" style="display:none">
+  <div class="modal-bottom anim-slide" id="ptsModal">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="pts-label" id="ptsLabel">PUNTOS</div>
+      <div class="pts-big" id="ptsBig"></div>
+      <div class="pts-name" id="ptsName"></div>
+    </div>
+    <div class="pts-controls">
+      <button class="pts-btn" id="ptsMinusBtn" onclick="handlePts(-1)">−</button>
+      <input class="pts-input" type="number" min="1" id="ptsAmt" value="1"/>
+      <button class="pts-btn" id="ptsPlusBtn" onclick="handlePts(1)">+</button>
+    </div>
+    <button class="done-btn" id="ptsDoneBtn" onclick="closePts()"></button>
+  </div>
+</div>
+
+<!-- Reset Confirm -->
+<div class="overlay" id="resetOverlay" style="display:none">
+  <div class="reset-confirm-modal anim-pop">
+    <div class="reset-icon">⚠️</div>
+    <div class="reset-title" id="resetTitle"></div>
+    <div class="reset-sub" id="resetSub"></div>
+    <div class="reset-btns">
+      <button class="reset-cancel" id="resetCancelBtn" onclick="closeReset()"></button>
+      <button class="reset-ok" id="resetOkBtn" onclick="doReset()"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────────
 const INIT = [
-  { id: 1, name: "Patrulla Alfa",  color: "#f97316", emoji: "🔥", members: [
-    { id: 101, name: "Carlos M.",  points: 0 },
-    { id: 102, name: "Sofía R.",   points: 0 },
-    { id: 103, name: "Diego P.",   points: 0 },
-  ]},
-  { id: 2, name: "Patrulla Beta",  color: "#22d3ee", emoji: "⚡", members: [
-    { id: 201, name: "Ana L.",     points: 0 },
-    { id: 202, name: "Marco T.",   points: 0 },
-    { id: 203, name: "Valeria S.", points: 0 },
-  ]},
-  { id: 3, name: "Patrulla Gamma", color: "#a78bfa", emoji: "🚀", members: [
-    { id: 301, name: "Luis H.",    points: 0 },
-    { id: 302, name: "Camila N.",  points: 0 },
-    { id: 303, name: "Rodrigo V.", points: 0 },
-  ]},
-  { id: 4, name: "Patrulla Delta", color: "#fbbf24", emoji: "💎", members: [
-    { id: 401, name: "Isabella C.",points: 0 },
-    { id: 402, name: "Tomás B.",   points: 0 },
-    { id: 403, name: "Natalia F.", points: 0 },
-  ]},
-  { id: 5, name: "Patrulla Omega", color: "#34d399", emoji: "🏆", members: [
-    { id: 501, name: "Pablo E.",   points: 0 },
-    { id: 502, name: "Lucía M.",   points: 0 },
-    { id: 503, name: "Andrés K.",  points: 0 },
-  ]},
+  {id:1,name:"Patrulla Alfa",color:"#f97316",emoji:"🔥",members:[
+    {id:101,name:"Carlos M.",points:0},{id:102,name:"Sofía R.",points:0},{id:103,name:"Diego P.",points:0}]},
+  {id:2,name:"Patrulla Beta",color:"#22d3ee",emoji:"⚡",members:[
+    {id:201,name:"Ana L.",points:0},{id:202,name:"Marco T.",points:0},{id:203,name:"Valeria S.",points:0}]},
+  {id:3,name:"Patrulla Gamma",color:"#a78bfa",emoji:"🚀",members:[
+    {id:301,name:"Luis H.",points:0},{id:302,name:"Camila N.",points:0},{id:303,name:"Rodrigo V.",points:0}]},
+  {id:4,name:"Patrulla Delta",color:"#fbbf24",emoji:"💎",members:[
+    {id:401,name:"Isabella C.",points:0},{id:402,name:"Tomás B.",points:0},{id:403,name:"Natalia F.",points:0}]},
+  {id:5,name:"Patrulla Omega",color:"#34d399",emoji:"🏆",members:[
+    {id:501,name:"Pablo E.",points:0},{id:502,name:"Lucía M.",points:0},{id:503,name:"Andrés K.",points:0}]},
 ];
 
-// ─── Utils ────────────────────────────────────────────────────────────────────
-const groupTotal = (g) => g.members.reduce((s, m) => s + m.points, 0);
-const sortGroups = (gs) => [...gs].sort((a, b) => groupTotal(b) - groupTotal(a));
-const allPlayers = (gs) =>
-  gs.flatMap((g) => g.members.map((m) => ({ ...m, gName: g.name, gColor: g.color, gEmoji: g.emoji, gId: g.id })))
-    .sort((a, b) => b.points - a.points);
-const sto = {
-  get: (k, fb) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch { return fb; } },
-  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+const LANG = {
+  es:{title:"JUEGO DE PUNTOS",sub:"Scouts",tabs:["Grupos","Individual","🔒 Gestionar"],
+    topGroups:"RANKING DE GRUPOS",topPlayers:"RANKING INDIVIDUAL",manageTitle:"GESTIONAR",
+    yourPoints:"PUNTOS",done:"Listo ✓",cancel:"Cancelar",
+    createPin:"Crear PIN de Juez",confirmPin:"Confirmar PIN",enterPin:"Acceso de Juez",
+    pinSub1:"Primera vez — crea un PIN de 4 dígitos",pinSub2:"Repite el PIN para confirmar",
+    pinSub3:"Ingresa el PIN de juez",
+    pinShowSub:"Anota este PIN, lo necesitarás siempre.",
+    pinShowWarn:"Guarda este número. No podrás recuperarlo si lo olvidas.",
+    pinShowConfirm:"Ya lo anoté, continuar ✓",
+    mismatch:"Los PINs no coinciden.",wrong:"PIN incorrecto.",
+    managePinTitle:"Acceso de Juez",managePinSub:"Solo el juez puede gestionar",
+    resetTitle:"Acceso Admin",resetSub:"PIN de administrador",
+    resetConfirm:"¿Reiniciar TODO?",resetConfirmSub:"Se borran todos los puntos.",
+    yesReset:"Sí, reiniciar",addMember:"Nuevo integrante...",add:"Agregar"},
+  pt:{title:"JOGO DE PONTOS",sub:"Escoteiros",tabs:["Grupos","Individual","🔒 Gerenciar"],
+    topGroups:"RANKING DE GRUPOS",topPlayers:"RANKING INDIVIDUAL",manageTitle:"GERENCIAR",
+    yourPoints:"PONTOS",done:"Pronto ✓",cancel:"Cancelar",
+    createPin:"Criar PIN do Juiz",confirmPin:"Confirmar PIN",enterPin:"Acesso do Juiz",
+    pinSub1:"Primeira vez — crie um PIN de 4 dígitos",pinSub2:"Repita o PIN para confirmar",
+    pinSub3:"Insira o PIN do juiz",
+    pinShowSub:"Anote este PIN, você precisará dele sempre.",
+    pinShowWarn:"Guarde este número. Não poderá recuperá-lo se esquecer.",
+    pinShowConfirm:"Já anotei, continuar ✓",
+    mismatch:"Os PINs não coincidem.",wrong:"PIN incorreto.",
+    managePinTitle:"Acesso do Juiz",managePinSub:"Só o juiz pode gerenciar",
+    resetTitle:"Acesso Admin",resetSub:"PIN de administrador",
+    resetConfirm:"Reiniciar TUDO?",resetConfirmSub:"Todos os pontos serão apagados.",
+    yesReset:"Sim, reiniciar",addMember:"Novo integrante...",add:"Adicionar"},
 };
 
-// ─── PinDots ──────────────────────────────────────────────────────────────────
-function PinDots({ total, filled, color }) {
-  return (
-    <div style={{ display: "flex", gap: 10, justifyContent: "center", marginBottom: 18 }}>
-      {Array.from({ length: total }).map((_, i) => (
-        <div key={i} style={{
-          width: 13, height: 13, borderRadius: "50%",
-          background: i < filled ? color : "transparent",
-          border: `2px solid ${i < filled ? color : "#444"}`,
-          transition: "all 0.15s",
-          transform: i < filled ? "scale(1.25)" : "scale(1)",
-        }} />
-      ))}
-    </div>
-  );
+// ── State ─────────────────────────────────────────────────────────────────────
+let lang = sto('sc_lang','es');
+let groups = sto('sc_groups', JSON.parse(JSON.stringify(INIT)));
+let judgePin = sto('sc_judge', null);
+let tab = 0;
+let openGroup = null;
+let openManage = null;
+let editingId = null;
+let manageOpen = false;
+
+// PIN state
+let pinStep = 'enter'; // create|confirm|enter|show
+let pinDigits = [];
+let pinFirst = null;
+let pinColor = '#f97316';
+let pinCallback = null;
+let pinIsNew = false;
+let pendingMember = null;
+let activeUser = null;
+
+function sto(k, def) {
+  try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; }
+}
+function sav(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+
+function t() { return LANG[lang]; }
+function gt(g) { return g.members.reduce((s,m) => s+m.points, 0); }
+function sortedGroups() { return [...groups].sort((a,b) => gt(b)-gt(a)); }
+function allPlayers() {
+  return groups.flatMap(g => g.members.map(m => ({...m,gName:g.name,gColor:g.color,gEmoji:g.emoji,gId:g.id})))
+    .sort((a,b) => b.points-a.points);
 }
 
-// ─── Numpad ───────────────────────────────────────────────────────────────────
-function Numpad({ onPress, onDel }) {
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 14 }}>
-      {[1,2,3,4,5,6,7,8,9,"",0,"⌫"].map((k, i) => (
-        <button key={i}
-          onClick={() => k === "⌫" ? onDel() : k !== "" ? onPress(String(k)) : null}
-          disabled={k === ""}
-          style={{
-            padding: "15px 0", borderRadius: 12, border: "1px solid #2a2a3a",
-            background: k === "" ? "transparent" : k === "⌫" ? "#1e1e2e" : "#1a1a2a",
-            color: k === "⌫" ? "#f87171" : "#f0f0f0",
-            fontSize: k === "⌫" ? 17 : 19, fontWeight: 700,
-            cursor: k === "" ? "default" : "pointer",
-            fontFamily: "inherit", opacity: k === "" ? 0 : 1,
-          }}>{k}</button>
-      ))}
-    </div>
-  );
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const L = t();
+  document.getElementById('appTitle').textContent = L.title;
+  document.getElementById('appSub').textContent = L.sub;
+  document.getElementById('langBtn').textContent = lang==='es'?'PT':'ES';
+
+  // Tabs
+  const tabsEl = document.getElementById('tabs');
+  tabsEl.innerHTML = L.tabs.map((label,i) =>
+    `<button class="tab ${tab===i?'active':'inactive'}" onclick="clickTab(${i})">${label}</button>`
+  ).join('');
+
+  // Content
+  const el = document.getElementById('content');
+  if(tab===0) renderGroups(el, L);
+  else if(tab===1) renderPlayers(el, L);
+  else if(tab===2 && manageOpen) renderManage(el, L);
+  else el.innerHTML = '';
 }
 
-// ─── PinModal ─────────────────────────────────────────────────────────────────
-function PinModal({ icon, title, subtitle, savedPin, color, onSuccess, onCancel, t }) {
-  const isNew = !savedPin;
-  const [step, setStep] = useState(isNew ? "create" : "enter");
-  const [digits, setDigits] = useState([]);
-  const [first, setFirst] = useState(null);
-  const [createdPin, setCreatedPin] = useState(null);
-  const [error, setError] = useState("");
-  const [shake, setShake] = useState(false);
-
-  function doShake(msg) {
-    setError(msg); setShake(true);
-    setTimeout(() => { setShake(false); setDigits([]); setError(""); }, 700);
-  }
-
-  function press(d) {
-    if (shake || step === "show") return;
-    const len = isNew ? 4 : savedPin.length;
-    if (digits.length >= len) return;
-    const next = [...digits, d];
-    setDigits(next);
-    if (next.length === len) {
-      const code = next.join("");
-      setTimeout(() => {
-        if (!isNew) {
-          code === savedPin ? onSuccess(null) : doShake(t.wrong);
-        } else if (step === "create") {
-          setFirst(code); setDigits([]); setStep("confirm");
-        } else {
-          if (code === first) { setCreatedPin(code); setStep("show"); }
-          else { doShake(t.mismatch); setStep("create"); setFirst(null); }
-        }
-      }, 160);
-    }
-  }
-
-  function del() { if (!shake && step !== "show") { setDigits(d => d.slice(0, -1)); setError(""); } }
-
-  const len = isNew ? 4 : (savedPin ? savedPin.length : 4);
-  const ttl = step === "enter" ? title : step === "create" ? t.createPin : step === "confirm" ? t.confirmPin : "✅ PIN Creado";
-  const sub = step === "enter" ? subtitle : step === "create" ? t.pinSub1 : step === "confirm" ? t.pinSub2 : t.pinShowSub;
-
-  if (step === "show" && createdPin) {
-    return (
-      <div style={{ position: "fixed", inset: 0, background: "#000e", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 400, padding: 16 }}>
-        <div style={{
-          background: "#0f0f1a", border: `1px solid ${color}55`, borderRadius: 24,
-          padding: "32px 24px", maxWidth: 310, width: "100%", textAlign: "center",
-          boxShadow: `0 0 50px ${color}20`, animation: "pop .25s",
-        }}>
-          <style>{`@keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}`}</style>
-          <div style={{ fontSize: 32, marginBottom: 10 }}>🔑</div>
-          <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 6, color: "#f0f0f0" }}>Tu PIN de Admin</div>
-          <div style={{ fontSize: 11, color: "#666", marginBottom: 20 }}>{t.pinShowSub}</div>
-          <div style={{ background: `${color}18`, border: `2px solid ${color}66`, borderRadius: 16, padding: "18px 0", marginBottom: 20 }}>
-            <div style={{ fontSize: 48, fontWeight: 900, color, letterSpacing: 16 }}>{createdPin}</div>
-          </div>
-          <div style={{ fontSize: 11, color: "#f87171", marginBottom: 24, lineHeight: 1.6 }}>
-            ⚠️ {t.pinShowWarning}
-          </div>
-          <button onClick={() => onSuccess(createdPin)} style={{
-            width: "100%", padding: 14, borderRadius: 14, border: "none",
-            background: color, color: "#000", fontSize: 14, fontWeight: 800,
-            cursor: "pointer", fontFamily: "inherit",
-          }}>{t.pinShowConfirm}</button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ position: "fixed", inset: 0, background: "#000e", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 400, padding: 16 }}>
-      <div style={{
-        background: "#0f0f1a", border: `1px solid ${color}55`, borderRadius: 24,
-        padding: "28px 22px", maxWidth: 310, width: "100%", textAlign: "center",
-        boxShadow: `0 0 50px ${color}20`,
-        animation: shake ? "shk .6s" : "pop .25s",
-      }}>
-        <style>{`
-          @keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
-          @keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
-        `}</style>
-        <div style={{ fontSize: 28, marginBottom: 6 }}>{icon}</div>
-        <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 4, color: "#f0f0f0" }}>{ttl}</div>
-        <div style={{ fontSize: 11, color: "#666", marginBottom: 18 }}>{sub}</div>
-        <PinDots total={len} filled={digits.length} color={color} />
-        {error && <div style={{ fontSize: 11, color: "#f87171", marginBottom: 10 }}>{error}</div>}
-        <Numpad onPress={press} onDel={del} />
-        {onCancel && (
-          <button onClick={onCancel} style={{ background: "none", border: "none", color: "#555", fontSize: 12, cursor: "pointer", fontFamily: "inherit" }}>{t.cancel}</button>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ─── PointsPanel ─────────────────────────────────────────────────────────────
-function PointsPanel({ member, color, groupId, onAdd, onClose, t }) {
-  const [amt, setAmt] = useState("1");
-  const [flash, setFlash] = useState(null);
-
-  function handle(sign) {
-    const n = parseInt(amt, 10);
-    if (!n || n <= 0) return;
-    onAdd(groupId, member.id, sign * n);
-    setFlash(sign); setTimeout(() => setFlash(null), 350);
-  }
-
-  return (
-    <div style={{ position: "fixed", inset: 0, background: "#000c", display: "flex", alignItems: "flex-end", justifyContent: "center", zIndex: 300, padding: 16 }}>
-      <div style={{
-        background: "#0f0f1a", border: `1px solid ${color}55`, borderRadius: 24,
-        padding: "26px 22px", maxWidth: 360, width: "100%",
-        boxShadow: `0 0 50px ${color}20`,
-        animation: "slideUp .3s cubic-bezier(.4,0,.2,1)",
-      }}>
-        <style>{`@keyframes slideUp{from{transform:translateY(36px);opacity:0}to{transform:translateY(0);opacity:1}}`}</style>
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <div style={{ fontSize: 11, letterSpacing: 2, color: "#555", marginBottom: 4 }}>{t.yourPoints}</div>
-          <div style={{ fontSize: 56, fontWeight: 900, color, letterSpacing: -3, lineHeight: 1 }}>{member.points}</div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#ccc", marginTop: 6 }}>{member.name}</div>
-        </div>
-        <div style={{ display: "flex", alignItems: "stretch", gap: 8, marginBottom: 14 }}>
-          <button onClick={() => handle(-1)} style={{
-            width: 64, height: 64, borderRadius: 14, flexShrink: 0,
-            border: `2px solid ${flash === -1 ? "#f87171" : "#2a1a1a"}`,
-            background: flash === -1 ? "#f8717120" : "#1e1818",
-            color: "#f87171", fontSize: 28, fontWeight: 900,
-            cursor: "pointer", fontFamily: "inherit",
-            transform: flash === -1 ? "scale(1.07)" : "scale(1)", transition: "all .15s",
-          }}>−</button>
-          <input
-            type="number" min="1" value={amt}
-            onChange={e => setAmt(e.target.value)}
-            style={{
-              flex: 1, textAlign: "center", background: "#141428",
-              border: `2px solid ${color}55`, borderRadius: 14,
-              color, fontSize: 24, fontWeight: 900, height: 64,
-              fontFamily: "inherit", outline: "none", padding: "0 8px",
-              minWidth: 0, boxSizing: "border-box",
-              WebkitAppearance: "none", MozAppearance: "textfield",
-            }}
-          />
-          <button onClick={() => handle(1)} style={{
-            width: 64, height: 64, borderRadius: 14, flexShrink: 0,
-            border: `2px solid ${flash === 1 ? color : color + "44"}`,
-            background: flash === 1 ? color + "30" : color + "18",
-            color, fontSize: 28, fontWeight: 900,
-            cursor: "pointer", fontFamily: "inherit",
-            transform: flash === 1 ? "scale(1.07)" : "scale(1)", transition: "all .15s",
-          }}>+</button>
-        </div>
-        <button onClick={onClose} style={{
-          width: "100%", padding: 13, borderRadius: 14, border: "1px solid #2a2a3a",
-          background: "none", color: "#555", fontSize: 13, fontWeight: 600,
-          cursor: "pointer", fontFamily: "inherit",
-        }}>{t.done}</button>
-      </div>
-    </div>
-  );
-}
-
-// ─── EditName ─────────────────────────────────────────────────────────────────
-function EditName({ value, color, onChange }) {
-  const [editing, setEditing] = useState(false);
-  const [val, setVal] = useState(value);
-  function commit() { if (val.trim()) onChange(val.trim()); else setVal(value); setEditing(false); }
-  if (editing) return (
-    <input value={val} autoFocus onChange={e => setVal(e.target.value)}
-      onBlur={commit}
-      onKeyDown={e => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setVal(value); setEditing(false); } }}
-      style={{ background: "transparent", border: "none", borderBottom: `2px solid ${color}`, color, fontWeight: 800, fontSize: 15, fontFamily: "inherit", outline: "none", width: 140, padding: "2px 0" }}
-    />
-  );
-  return (
-    <span onClick={e => { e.stopPropagation(); setEditing(true); setVal(value); }}
-      style={{ fontWeight: 800, fontSize: 15, color, cursor: "text", borderBottom: `1px dashed ${color}55`, paddingBottom: 1 }}>
-      {value}
-    </span>
-  );
-}
-
-// ─── EditRow ──────────────────────────────────────────────────────────────────
-function EditRow({ initial, color, onSave, onCancel }) {
-  const [val, setVal] = useState(initial);
-  return (
-    <>
-      <input value={val} autoFocus onChange={e => setVal(e.target.value)}
-        onKeyDown={e => { if (e.key === "Enter") onSave(val); if (e.key === "Escape") onCancel(); }}
-        style={{ flex: 1, background: "#141428", border: `1px solid ${color}44`, borderRadius: 8, color: "#f0f0f0", fontSize: 12, fontFamily: "inherit", outline: "none", padding: "6px 10px" }}
-      />
-      <button onClick={() => onSave(val)} style={smBtn(color + "22", color)}>✓</button>
-      <button onClick={onCancel} style={smBtn("#1a1a2e", "#666")}>✕</button>
-    </>
-  );
-}
-
-// ─── Medal ────────────────────────────────────────────────────────────────────
-function Medal({ i }) {
-  if (i === 0) return <span style={{ fontSize: 18 }}>🥇</span>;
-  if (i === 1) return <span style={{ fontSize: 18 }}>🥈</span>;
-  if (i === 2) return <span style={{ fontSize: 18 }}>🥉</span>;
-  return <span style={{ fontSize: 12, color: "#444", fontWeight: 700, minWidth: 22, textAlign: "center", display: "inline-block" }}>#{i + 1}</span>;
-}
-
-const smBtn = (bg, color) => ({
-  background: bg, color, border: "none", borderRadius: 8,
-  padding: "6px 9px", fontSize: 12, fontWeight: 700,
-  cursor: "pointer", fontFamily: "inherit", flexShrink: 0,
-});
-
-// ─── App ──────────────────────────────────────────────────────────────────────
-function App() {
-  const [lang, setLang]           = useState(() => sto.get("sc_lang", "es"));
-  const [groups, setGroups]       = useState(() => sto.get("sc_groups", INIT));
-  const [judgePin, setJudgePin]   = useState(() => sto.get("sc_judge", null));
-  const t = LANG[lang];
-
-  const [tab, setTab]             = useState(0);
-  const [manageOpen, setManageOpen] = useState(false);
-  const [openGroup, setOpenGroup] = useState(null);
-  const [openManage, setOpenManage] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [addInput, setAddInput]   = useState("");
-
-  // Modals
-  const [pendingMember, setPendingMember]   = useState(null); // waiting for judge PIN to edit points
-  const [activeUser, setActiveUser]         = useState(null); // points panel open
-  const [showManagePin, setShowManagePin]   = useState(false);
-  const [showResetPin, setShowResetPin]     = useState(false);
-  const [showResetConfirm, setShowResetConfirm] = useState(false);
-
-  useEffect(() => sto.set("sc_lang", lang),     [lang]);
-  useEffect(() => sto.set("sc_groups", groups), [groups]);
-  useEffect(() => sto.set("sc_judge", judgePin),[judgePin]);
-
-  function upd(fn) { setGroups(prev => fn(prev)); }
-
-  // Tap a member name → ask judge PIN first
-  function tapMember(member, group) {
-    setPendingMember({ member, gColor: group.color, gId: group.id });
-  }
-
-  function onJudgePinOk(newPin) {
-    if (newPin) { setJudgePin(newPin); sto.set("sc_judge", newPin); }
-    const { member, gColor, gId } = pendingMember;
-    setPendingMember(null);
-    setActiveUser({ member, gColor, gId });
-  }
-
-  function onManagePinOk(newPin) {
-    if (newPin) { setJudgePin(newPin); sto.set("sc_judge", newPin); }
-    setShowManagePin(false);
-    setManageOpen(true);
-    setTab(2);
-  }
-
-  function onResetPinOk(newPin) {
-    if (newPin) { setJudgePin(newPin); sto.set("sc_judge", newPin); }
-    setShowResetPin(false);
-    setShowResetConfirm(true);
-  }
-
-  function addPoints(gId, mId, delta) {
-    upd(gs => gs.map(g => g.id === gId
-      ? { ...g, members: g.members.map(m => m.id === mId ? { ...m, points: Math.max(0, m.points + delta) } : m) } : g));
-    setActiveUser(au => au ? { ...au, member: { ...au.member, points: Math.max(0, au.member.points + delta) } } : au);
-  }
-
-  function renameGroup(gId, name) {
-    upd(gs => gs.map(g => g.id === gId ? { ...g, name } : g));
-  }
-
-  function renameMember(gId, mId, name) {
-    if (!name.trim()) return;
-    upd(gs => gs.map(g => g.id === gId
-      ? { ...g, members: g.members.map(m => m.id === mId ? { ...m, name: name.trim() } : m) } : g));
-    setEditingId(null);
-  }
-
-  function addMember(gId, name) {
-    if (!name.trim()) return;
-    upd(gs => gs.map(g => g.id === gId
-      ? { ...g, members: [...g.members, { id: Date.now(), name: name.trim(), points: 0 }] } : g));
-    setAddInput("");
-  }
-
-  function setPointsDirect(gId, mId, val) {
-    const n = parseInt(val, 10);
-    if (isNaN(n) || n < 0) return;
-    upd(gs => gs.map(g => g.id === gId
-      ? { ...g, members: g.members.map(m => m.id === mId ? { ...m, points: n } : m) } : g));
-  }
-
-  function handleTabClick(i) {
-    setManageOpen(false);
-    if (i === 2) { setShowManagePin(true); }
-    else { setTab(i); }
-  }
-
-  function doReset() {
-    setGroups(INIT);
-    setShowResetConfirm(false);
-    setTab(0);
-    setManageOpen(false);
-  }
-
-  const ranked = sortGroups(groups);
-  const players = allPlayers(groups);
-
-  return (
-    <div style={{ minHeight: "100vh", background: "#08080f", color: "#f0f0f0", fontFamily: "'Syne','Barlow',system-ui,sans-serif", paddingBottom: 80 }}>
-      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
-
-      {/* Header */}
-      <div style={{ background: "linear-gradient(160deg,#0f0f1e,#14141f)", borderBottom: "1px solid #1e1e2e", padding: "20px 18px 14px", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ maxWidth: 580, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <div>
-              <div style={{ fontSize: 10, letterSpacing: 4, color: "#444", textTransform: "uppercase" }}>{t.sub}</div>
-              <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: -1, lineHeight: 1.1 }}>{t.title}</div>
+function renderGroups(el, L) {
+  const ranked = sortedGroups();
+  const maxT = gt(ranked[0]) || 1;
+  el.innerHTML = `<div class="section-label">${L.topGroups}</div>` +
+    ranked.map((g,i) => {
+      const tot = gt(g);
+      const pct = (tot/maxT*100).toFixed(1);
+      const border = i===0 ? `1px solid ${g.color}44` : '1px solid #1a1a2a';
+      const shadow = i===0 ? `0 0 24px ${g.color}18` : 'none';
+      const open = openGroup===g.id;
+      let members = '';
+      if(open) {
+        members = `<div class="group-members">` +
+          g.members.map(m => `
+            <div class="member-row" id="mrow-${m.id}">
+              <div style="flex:1"><div class="member-name">${m.name}</div></div>
+              <div class="member-pts" style="color:${g.color}">${m.points}</div>
+            </div>`).join('') + `</div>`;
+      }
+      return `<div class="group-card" style="border:${border};box-shadow:${shadow}">
+        <div class="group-header" onclick="toggleGroup(${g.id})">
+          <span style="font-size:${i<3?18:12}px;flex-shrink:0">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span class="group-name" style="color:${g.color}">${g.emoji} ${g.name}</span>
+              <span class="group-score" style="color:${g.color}">${tot}</span>
             </div>
-            <div style={{ display: "flex", gap: 7 }}>
-              <button onClick={() => setLang(l => l === "es" ? "pt" : "es")} style={{
-                background: "#1a1a2e", border: "1px solid #2a2a3e", color: "#888",
-                borderRadius: 8, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
-              }}>{lang === "es" ? "PT" : "ES"}</button>
-              <button onClick={() => setShowResetPin(true)} style={{
-                background: "none", border: "1px solid #2a2a3e", color: "#555",
-                borderRadius: 8, padding: "5px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit",
-              }}>{t.reset}</button>
-            </div>
+            <div class="bar-bg"><div class="bar-fill" style="background:${g.color};width:${pct}%"></div></div>
           </div>
-          <div style={{ display: "flex", gap: 6 }}>
-            {t.tabs.map((label, i) => (
-              <button key={i} onClick={() => handleTabClick(i)} style={{
-                flex: 1, padding: "8px 4px", borderRadius: 10, border: "none", cursor: "pointer",
-                fontSize: 11, fontWeight: 700, fontFamily: "inherit",
-                background: tab === i ? "#f0f0f0" : "#141428",
-                color: tab === i ? "#08080f" : "#555",
-                transition: "all .2s",
-              }}>{label}</button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div style={{ maxWidth: 580, margin: "0 auto", padding: "18px 16px" }}>
-
-        {/* GROUPS */}
-        {tab === 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ fontSize: 10, letterSpacing: 3, color: "#444", marginBottom: 2 }}>{t.topGroups}</div>
-            {ranked.map((g, i) => {
-              const tot = groupTotal(g);
-              const maxTot = groupTotal(ranked[0]) || 1;
-              const isOpen = openGroup === g.id;
-              return (
-                <div key={g.id} style={{
-                  background: "#0f0f1a", borderRadius: 16,
-                  border: `1px solid ${i === 0 ? g.color + "44" : "#1a1a2a"}`,
-                  overflow: "hidden",
-                  boxShadow: i === 0 ? `0 0 24px ${g.color}18` : "none",
-                }}>
-                  <div onClick={() => setOpenGroup(isOpen ? null : g.id)}
-                    style={{ padding: "14px 18px", cursor: "pointer", display: "flex", alignItems: "center", gap: 10 }}>
-                    <Medal i={i} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
-                        <span style={{ fontWeight: 800, fontSize: 15, color: g.color }}>{g.emoji} {g.name}</span>
-                        <span style={{ fontWeight: 900, fontSize: 20, color: g.color, letterSpacing: -1 }}>{tot}</span>
-                      </div>
-                      <div style={{ height: 3, background: "#1e1e2e", borderRadius: 99, overflow: "hidden" }}>
-                        <div style={{ height: "100%", background: g.color, borderRadius: 99, width: `${(tot / maxTot) * 100}%`, transition: "width .5s" }} />
-                      </div>
-                    </div>
-                    <span style={{ color: "#333", fontSize: 11 }}>{isOpen ? "▲" : "▼"}</span>
-                  </div>
-                  {isOpen && (
-                    <div style={{ borderTop: "1px solid #1a1a2a", padding: "10px 18px 14px" }}>
-                      {g.members.map(m => (
-                        <div key={m.id}
-                          style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px", borderBottom: "1px solid #141428" }}>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 700 }}>{m.name}</div>
-                          </div>
-                          <div style={{ fontWeight: 900, fontSize: 20, color: g.color, letterSpacing: -1 }}>{m.points}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* INDIVIDUAL */}
-        {tab === 1 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ fontSize: 10, letterSpacing: 3, color: "#444", marginBottom: 4 }}>{t.topPlayers}</div>
-            {players.map((m, i) => (
-              <div key={m.id} style={{
-                background: "#0f0f1a", border: `1px solid ${i === 0 ? m.gColor + "44" : "#1a1a2a"}`,
-                borderRadius: 14, padding: "13px 16px", display: "flex", alignItems: "center", gap: 10,
-                boxShadow: i === 0 ? `0 0 20px ${m.gColor}15` : "none",
-              }}>
-                <Medal i={i} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14 }}>{m.name}</div>
-                  <div style={{ fontSize: 10, color: m.gColor, opacity: .7, marginTop: 1 }}>{m.gEmoji} {m.gName}</div>
-                </div>
-                <div style={{ fontWeight: 900, fontSize: 22, color: m.gColor, letterSpacing: -1 }}>{m.points}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* MANAGE */}
-        {tab === 2 && manageOpen && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ fontSize: 10, letterSpacing: 3, color: "#444", marginBottom: 2 }}>{t.manageTitle}</div>
-            {groups.map(g => {
-              const isOpen = openManage === g.id;
-              return (
-                <div key={g.id} style={{ background: "#0f0f1a", borderRadius: 16, border: "1px solid #1a1a2a", overflow: "hidden" }}>
-                  <div onClick={() => setOpenManage(isOpen ? null : g.id)}
-                    style={{ padding: "13px 16px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div onClick={e => e.stopPropagation()}>
-                      <EditName value={g.name} color={g.color} onChange={n => renameGroup(g.id, n)} />
-                    </div>
-                    <span style={{ color: "#333", fontSize: 11 }}>{isOpen ? "▲" : "▼"}</span>
-                  </div>
-                  {isOpen && (
-                    <div style={{ borderTop: "1px solid #141428", padding: "10px 16px 14px" }}>
-                      {g.members.map(m => (
-                        <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 0", borderBottom: "1px solid #141428" }}>
-                          {editingId === m.id ? (
-                            <EditRow initial={m.name} color={g.color}
-                              onSave={n => renameMember(g.id, m.id, n)}
-                              onCancel={() => setEditingId(null)}
-                            />
-                          ) : (
-                            <>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: 13, fontWeight: 600 }}>{m.name}</div>
-                              </div>
-                              <input type="number" min="0" value={m.points}
-                                onChange={e => setPointsDirect(g.id, m.id, e.target.value)}
-                                style={{ width: 60, textAlign: "center", background: "#141428", border: `1px solid ${g.color}33`, borderRadius: 8, color: g.color, fontWeight: 800, fontSize: 14, fontFamily: "inherit", outline: "none", padding: "5px 4px" }}
-                              />
-                              <button onClick={() => { setEditingId(m.id); }} style={smBtn("#1a1a2e", "#888")}>✏️</button>
-                              <button onClick={() => { setPendingMember({ member: m, gColor: g.color, gId: g.id }); }} style={smBtn(g.color + "22", g.color)}>±</button>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                      <div style={{ display: "flex", gap: 7, marginTop: 10 }}>
-                        <input placeholder={t.addMember} value={addInput}
-                          onChange={e => setAddInput(e.target.value)}
-                          onKeyDown={e => e.key === "Enter" && addMember(g.id, addInput)}
-                          style={{ flex: 1, background: "#141428", border: "1px solid #2a2a3a", borderRadius: 10, color: "#f0f0f0", fontSize: 12, fontFamily: "inherit", outline: "none", padding: "8px 12px" }}
-                        />
-                        <button onClick={() => addMember(g.id, addInput)}
-                          style={{ ...smBtn(g.color + "22", g.color), padding: "8px 14px", fontWeight: 700, fontSize: 12 }}>{t.add}</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* ── Modals ── */}
-
-      {/* Judge PIN to edit a member's points */}
-      {pendingMember && (
-        <PinModal
-          icon="⚖️" color={pendingMember.gColor}
-          savedPin={judgePin}
-          title={judgePin ? t.enterPin : t.createPin}
-          subtitle={judgePin ? t.pinSub3 : t.pinSub1}
-          onSuccess={onJudgePinOk}
-          onCancel={() => setPendingMember(null)}
-          t={t}
-        />
-      )}
-
-      {/* Points panel */}
-      {activeUser && (
-        <PointsPanel
-          member={activeUser.member} color={activeUser.gColor} groupId={activeUser.gId}
-          onAdd={addPoints} onClose={() => setActiveUser(null)} t={t}
-        />
-      )}
-
-      {/* Manage PIN */}
-      {showManagePin && (
-        <PinModal
-          icon="🛡️" color="#38bdf8"
-          savedPin={judgePin}
-          title={judgePin ? t.managePinTitle : t.createPin}
-          subtitle={judgePin ? t.managePinSub : t.pinSub1}
-          onSuccess={onManagePinOk}
-          onCancel={() => setShowManagePin(false)}
-          t={t}
-        />
-      )}
-
-      {/* Reset PIN */}
-      {showResetPin && (
-        <PinModal
-          icon="👑" color="#e879f9"
-          savedPin={judgePin}
-          title={judgePin ? t.resetTitle : t.createPin}
-          subtitle={judgePin ? t.resetSub : t.pinSub1}
-          onSuccess={onResetPinOk}
-          onCancel={() => setShowResetPin(false)}
-          t={t}
-        />
-      )}
-
-      {/* Reset confirm */}
-      {showResetConfirm && (
-        <div style={{ position: "fixed", inset: 0, background: "#000d", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 400, padding: 16 }}>
-          <div style={{ background: "#0f0f1a", border: "1px solid #f8717144", borderRadius: 22, padding: 26, maxWidth: 300, width: "100%", textAlign: "center" }}>
-            <div style={{ fontSize: 34, marginBottom: 10 }}>⚠️</div>
-            <div style={{ fontWeight: 800, fontSize: 17, marginBottom: 6 }}>{t.resetConfirm}</div>
-            <div style={{ fontSize: 12, color: "#666", marginBottom: 22 }}>{t.resetConfirmSub}</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => setShowResetConfirm(false)} style={{ flex: 1, padding: 12, borderRadius: 12, border: "1px solid #2a2a3a", background: "none", color: "#888", cursor: "pointer", fontFamily: "inherit", fontWeight: 600, fontSize: 13 }}>{t.cancel}</button>
-              <button onClick={doReset} style={{ flex: 1, padding: 12, borderRadius: 12, border: "none", background: "#f87171", color: "#fff", cursor: "pointer", fontFamily: "inherit", fontWeight: 800, fontSize: 13 }}>{t.yesReset}</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+          <span class="chevron">${open?'▲':'▼'}</span>
+        </div>${members}</div>`;
+    }).join('');
 }
 
-  ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
-  </script>
+function renderPlayers(el, L) {
+  const players = allPlayers();
+  el.innerHTML = `<div class="section-label">${L.topPlayers}</div>` +
+    players.map((m,i) => {
+      const border = i===0 ? `1px solid ${m.gColor}44` : '1px solid #1a1a2a';
+      const shadow = i===0 ? `0 0 20px ${m.gColor}15` : 'none';
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
+      const rankEl = medal ? `<span class="medal">${medal}</span>` : `<span class="rank">#${i+1}</span>`;
+      return `<div class="player-card" style="border:${border};box-shadow:${shadow}">
+        ${rankEl}
+        <div style="flex:1">
+          <div class="player-name">${m.name}</div>
+          <div class="player-group" style="color:${m.gColor}">${m.gEmoji} ${m.gName}</div>
+        </div>
+        <div class="player-pts" style="color:${m.gColor}">${m.points}</div>
+      </div>`;
+    }).join('');
+}
+
+function renderManage(el, L) {
+  el.innerHTML = `<div class="section-label">${L.manageTitle}</div>` +
+    groups.map(g => {
+      const open = openManage===g.id;
+      let body = '';
+      if(open) {
+        const rows = g.members.map(m => {
+          if(editingId===m.id) {
+            return `<div class="manage-row">
+              <input id="editInput-${m.id}" value="${m.name}" style="flex:1;background:#141428;border:1px solid ${g.color}44;border-radius:8px;color:#f0f0f0;font-size:12px;outline:none;padding:6px 10px"/>
+              <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="saveMemberName(${g.id},${m.id})">✓</button>
+              <button class="sm-btn" style="background:#1a1a2e;color:#666" onclick="cancelEdit()">✕</button>
+            </div>`;
+          }
+          return `<div class="manage-row">
+            <div style="flex:1"><div style="font-size:13px;font-weight:600">${m.name}</div></div>
+            <input type="number" min="0" value="${m.points}" class="pts-direct" style="border:1px solid ${g.color}33;color:${g.color}" onchange="setDirect(${g.id},${m.id},this.value)"/>
+            <button class="sm-btn" style="background:#1a1a2e;color:#888" onclick="startEdit(${m.id})">✏️</button>
+            <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="openPtsFor(${g.id},${m.id})">±</button>
+          </div>`;
+        }).join('');
+        body = `<div class="manage-body">${rows}
+          <div class="add-row">
+            <input class="add-input" id="addInput-${g.id}" placeholder="${L.addMember}" onkeydown="if(event.key==='Enter')addMember(${g.id})"/>
+            <button class="add-btn" style="background:${g.color}22;color:${g.color}" onclick="addMember(${g.id})">${L.add}</button>
+          </div></div>`;
+      }
+      return `<div class="manage-card">
+        <div class="manage-header" onclick="toggleManage(${g.id})">
+          <span style="font-weight:800;font-size:14px;color:${g.color}">${g.emoji} ${g.name}</span>
+          <span class="chevron">${open?'▲':'▼'}</span>
+        </div>${body}</div>`;
+    }).join('');
+}
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function clickTab(i) {
+  manageOpen = false;
+  if(i===2) { openManagePinModal(); }
+  else { tab=i; render(); }
+}
+
+function toggleGroup(id) { openGroup = openGroup===id ? null : id; render(); }
+function toggleManage(id) { openManage = openManage===id ? null : id; render(); }
+function toggleLang() { lang = lang==='es'?'pt':'es'; sav('sc_lang',lang); render(); }
+
+// ── Member editing ────────────────────────────────────────────────────────────
+function startEdit(mId) { editingId=mId; render(); setTimeout(()=>{const el=document.getElementById('editInput-'+mId);if(el)el.focus();},50); }
+function cancelEdit() { editingId=null; render(); }
+function saveMemberName(gId,mId) {
+  const el = document.getElementById('editInput-'+mId);
+  if(!el||!el.value.trim()) return;
+  groups = groups.map(g => g.id===gId ? {...g,members:g.members.map(m => m.id===mId?{...m,name:el.value.trim()}:m)} : g);
+  sav('sc_groups',groups); editingId=null; render();
+}
+function addMember(gId) {
+  const el = document.getElementById('addInput-'+gId);
+  if(!el||!el.value.trim()) return;
+  const nm = {id:Date.now(),name:el.value.trim(),points:0};
+  groups = groups.map(g => g.id===gId ? {...g,members:[...g.members,nm]} : g);
+  sav('sc_groups',groups); render();
+}
+function setDirect(gId,mId,val) {
+  const n = parseInt(val,10);
+  if(isNaN(n)||n<0) return;
+  groups = groups.map(g => g.id===gId ? {...g,members:g.members.map(m => m.id===mId?{...m,points:n}:m)} : g);
+  sav('sc_groups',groups);
+}
+function openPtsFor(gId,mId) {
+  const g = groups.find(x=>x.id===gId);
+  const m = g.members.find(x=>x.id===mId);
+  pendingMember = {member:m,gColor:g.color,gId:gId};
+  openJudgePin();
+}
+
+// ── Points Panel ──────────────────────────────────────────────────────────────
+function openPtsPanel(member, color, gId) {
+  activeUser = {member, color, gId};
+  const L = t();
+  document.getElementById('ptsLabel').textContent = L.yourPoints;
+  document.getElementById('ptsBig').textContent = member.points;
+  document.getElementById('ptsBig').style.color = color;
+  document.getElementById('ptsName').textContent = member.name;
+  document.getElementById('ptsAmt').value = '1';
+  document.getElementById('ptsAmt').style.color = color;
+  document.getElementById('ptsAmt').style.border = `2px solid ${color}55`;
+  document.getElementById('ptsMinusBtn').style.cssText = `width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;border:2px solid #2a1a1a;background:#1e1818;color:#f87171;transition:all .15s`;
+  document.getElementById('ptsPlusBtn').style.cssText = `width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;border:2px solid ${color}44;background:${color}18;color:${color};transition:all .15s`;
+  document.getElementById('ptsDoneBtn').textContent = L.done;
+  document.getElementById('ptsOverlay').style.display = 'flex';
+}
+function handlePts(sign) {
+  const amt = parseInt(document.getElementById('ptsAmt').value,10);
+  if(!amt||amt<=0||!activeUser) return;
+  const delta = sign*amt;
+  groups = groups.map(g => g.id===activeUser.gId ? {...g,members:g.members.map(m => m.id===activeUser.member.id?{...m,points:Math.max(0,m.points+delta)}:m)} : g);
+  sav('sc_groups',groups);
+  activeUser.member.points = Math.max(0, activeUser.member.points+delta);
+  document.getElementById('ptsBig').textContent = activeUser.member.points;
+}
+function closePts() { document.getElementById('ptsOverlay').style.display='none'; activeUser=null; render(); }
+
+// ── PIN System ────────────────────────────────────────────────────────────────
+function buildNumpad() {
+  const keys = [1,2,3,4,5,6,7,8,9,'',0,'⌫'];
+  document.getElementById('numpad').innerHTML = keys.map(k => {
+    if(k==='') return `<button class="numpad-btn empty" disabled></button>`;
+    if(k==='⌫') return `<button class="numpad-btn del" onclick="pinDel()">⌫</button>`;
+    return `<button class="numpad-btn" onclick="pinPress('${k}')">${k}</button>`;
+  }).join('');
+}
+function renderDots(len, filled, color) {
+  document.getElementById('pinDots').innerHTML = Array.from({length:len}).map((_,i) => {
+    const filled_i = i<filled;
+    return `<div class="pin-dot" style="background:${filled_i?color:'transparent'};border:2px solid ${filled_i?color:'#444'};transform:${filled_i?'scale(1.25)':'scale(1)'}"></div>`;
+  }).join('');
+}
+function openPinModal(icon, title, sub, color, isNew, savedPin, callback, showCancel) {
+  pinColor = color; pinCallback = callback; pinIsNew = isNew;
+  pinDigits = []; pinStep = isNew?'create':'enter'; pinFirst = null;
+  document.getElementById('pinIcon').textContent = icon;
+  document.getElementById('pinTitle').textContent = isNew ? t().createPin : title;
+  document.getElementById('pinSub').textContent = isNew ? t().pinSub1 : sub;
+  document.getElementById('pinError').textContent = '';
+  document.getElementById('pinCancelBtn').textContent = t().cancel;
+  document.getElementById('pinCancelBtn').style.display = showCancel?'block':'none';
+  buildNumpad();
+  renderDots(4, 0, color);
+  document.getElementById('pinOverlay').style.display = 'flex';
+  document.getElementById('pinModal').className = 'modal anim-pop';
+}
+function pinPress(d) {
+  if(pinDigits.length>=4) return;
+  pinDigits.push(d);
+  renderDots(4, pinDigits.length, pinColor);
+  document.getElementById('pinError').textContent = '';
+  if(pinDigits.length===4) {
+    const code = pinDigits.join('');
+    setTimeout(()=>{
+      if(!pinIsNew) {
+        if(code===judgePin) { closePinModal(); pinCallback(null); }
+        else { pinShake(t().wrong); }
+      } else if(pinStep==='create') {
+        pinFirst=code; pinDigits=[]; pinStep='confirm';
+        document.getElementById('pinTitle').textContent = t().confirmPin;
+        document.getElementById('pinSub').textContent = t().pinSub2;
+        renderDots(4,0,pinColor);
+      } else {
+        if(code===pinFirst) {
+          closePinModal();
+          showPinCreated(code);
+        } else { pinShake(t().mismatch); pinStep='create'; pinFirst=null; document.getElementById('pinTitle').textContent=t().createPin; document.getElementById('pinSub').textContent=t().pinSub1; }
+      }
+    },160);
+  }
+}
+function pinDel() { if(pinDigits.length>0){pinDigits.pop(); renderDots(4,pinDigits.length,pinColor); document.getElementById('pinError').textContent='';} }
+function pinShake(msg) {
+  pinDigits=[];
+  renderDots(4,0,pinColor);
+  document.getElementById('pinError').textContent=msg;
+  const m = document.getElementById('pinModal');
+  m.className='modal anim-shake';
+  setTimeout(()=>m.className='modal',700);
+}
+function closePinModal() { document.getElementById('pinOverlay').style.display='none'; }
+
+function showPinCreated(code) {
+  const L = t();
+  document.getElementById('pinShowSub').textContent = L.pinShowSub;
+  document.getElementById('pinShowNum').textContent = code;
+  document.getElementById('pinShowNum').style.color = pinColor;
+  document.getElementById('pinShowBox').style.background = pinColor+'18';
+  document.getElementById('pinShowBox').style.border = `2px solid ${pinColor}66`;
+  document.getElementById('pinShowWarn').textContent = '⚠️ '+L.pinShowWarn;
+  document.getElementById('pinShowConfirmBtn').textContent = L.pinShowConfirm;
+  document.getElementById('pinShowConfirmBtn').style.background = pinColor;
+  document.getElementById('pinShowOverlay').style.display = 'flex';
+  // store temporarily
+  window._pendingNewPin = code;
+}
+function confirmPinShown() {
+  const code = window._pendingNewPin;
+  judgePin = code; sav('sc_judge',code);
+  document.getElementById('pinShowOverlay').style.display='none';
+  if(pinCallback) pinCallback(code);
+}
+
+// ── PIN entry points ──────────────────────────────────────────────────────────
+function openJudgePin() {
+  openPinModal('⚖️', t().enterPin, t().pinSub3, pendingMember.gColor, !judgePin, judgePin,
+    ()=>{ const {member,gColor,gId}=pendingMember; pendingMember=null; openPtsPanel(member,gColor,gId); }, true);
+}
+function openManagePinModal() {
+  openPinModal('🛡️', t().managePinTitle, t().managePinSub, '#38bdf8', !judgePin, judgePin,
+    ()=>{ manageOpen=true; tab=2; render(); }, true);
+}
+function showResetPin() {
+  openPinModal('👑', t().resetTitle, t().resetSub, '#e879f9', !judgePin, judgePin,
+    ()=>{ document.getElementById('resetTitle').textContent=t().resetConfirm; document.getElementById('resetSub').textContent=t().resetConfirmSub; document.getElementById('resetCancelBtn').textContent=t().cancel; document.getElementById('resetOkBtn').textContent=t().yesReset; document.getElementById('resetOverlay').style.display='flex'; }, true);
+}
+function closeReset() { document.getElementById('resetOverlay').style.display='none'; }
+function doReset() { groups=JSON.parse(JSON.stringify(INIT)); sav('sc_groups',groups); closeReset(); tab=0; manageOpen=false; render(); }
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render();
+</script>
 </body>
 </html>
