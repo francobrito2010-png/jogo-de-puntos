@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 <title>Jogo de Pontos</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
@@ -173,7 +175,7 @@ button,input{font-family:'Syne','Barlow',system-ui,sans-serif}
     <div class="header-inner">
       <div class="header-top">
         <div>
-          <div class="app-sub" id="appSub">Escoteiros</div>
+          <div class="app-sub" id="appSub">Escoteiros <span id="liveDot" title="Sincronização em tempo real" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#666;margin-left:4px;vertical-align:middle"></span></div>
           <div class="app-title" id="appTitle" onclick="titleTap()">JOGO DE PONTOS</div>
         </div>
         <div class="header-btns">
@@ -335,6 +337,35 @@ const INIT = [
 // ── Storage ───────────────────────────────────────────────────────────────────
 function sto(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
 function sav(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+// ── Firebase ──────────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyACrr118KrNNQXJtp-9e6yvjNriCrClIWw",
+  authDomain: "jogo-de-puntos.firebaseapp.com",
+  projectId: "jogo-de-puntos",
+  storageBucket: "jogo-de-puntos.firebasestorage.app",
+  messagingSenderId: "106088035110",
+  appId: "1:106088035110:web:a33f8a18d50561d414c7e7"
+};
+let db = null, fsDoc = null;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  fsDoc = db.collection('jogo').doc('state');
+} catch(e) { console.warn('Firebase init failed', e); }
+
+function setLive(on){
+  const dot = document.getElementById('liveDot');
+  if(dot) dot.style.background = on ? '#4ade80' : '#666';
+}
+
+// Saves groups locally AND syncs to Firestore so every viewer sees updates live
+function saveGroups(){
+  sav('sc_groups', groups);
+  if(fsDoc){
+    fsDoc.set({groups, updatedAt: Date.now()}).catch(e=>console.warn('Firestore write failed', e));
+  }
+}
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let groups    = sto('sc_groups', JSON.parse(JSON.stringify(INIT)));
@@ -499,18 +530,18 @@ function saveName(gId,mId){
   const e=document.getElementById('ei-'+mId);
   if(!e||!e.value.trim())return;
   groups=groups.map(g=>g.id===gId?{...g,members:g.members.map(m=>m.id===mId?{...m,name:e.value.trim()}:m)}:g);
-  sav('sc_groups',groups);editingId=null;render();
+  saveGroups();editingId=null;render();
 }
 function addMember(gId){
   const e=document.getElementById('ai-'+gId);
   if(!e||!e.value.trim())return;
   groups=groups.map(g=>g.id===gId?{...g,members:[...g.members,{id:Date.now(),name:e.value.trim(),points:0}]}:g);
-  sav('sc_groups',groups);render();
+  saveGroups();render();
 }
 function setDirect(gId,mId,val){
   const n=parseInt(val,10);if(isNaN(n)||n<0)return;
   groups=groups.map(g=>g.id===gId?{...g,members:g.members.map(m=>m.id===mId?{...m,points:n}:m)}:g);
-  sav('sc_groups',groups);
+  saveGroups();
 }
 
 // ── Points Panel ──────────────────────────────────────────────────────────────
@@ -535,7 +566,7 @@ function handlePts(sign){
   if(!amt||amt<=0||!activeUser)return;
   const delta=sign*amt;
   groups=groups.map(g=>g.id===activeUser.gId?{...g,members:g.members.map(m=>m.id===activeUser.member.id?{...m,points:Math.max(0,m.points+delta)}:m)}:g);
-  sav('sc_groups',groups);
+  saveGroups();
   activeUser.member.points=Math.max(0,activeUser.member.points+delta);
   document.getElementById('ptsBig').textContent=activeUser.member.points;
 }
@@ -697,7 +728,7 @@ function showResetPin(){
 }
 function closeReset(){document.getElementById('resetOverlay').style.display='none';}
 function doReset(){
-  groups=JSON.parse(JSON.stringify(INIT));sav('sc_groups',groups);
+  groups=JSON.parse(JSON.stringify(INIT));saveGroups();
   closeReset();tab=0;manageOpen=false;openGroup=null;openManage=null;render();
 }
 
@@ -721,6 +752,25 @@ function titleTap(){
 // ── Init ──────────────────────────────────────────────────────────────────────
 applyTheme();
 render();
+
+// ── Realtime sync (live for all viewers) ──────────────────────────────────────
+if(fsDoc){
+  fsDoc.onSnapshot(doc=>{
+    if(doc.exists){
+      const data = doc.data();
+      if(data && data.groups){
+        groups = data.groups;
+        sav('sc_groups', groups);
+        // Avoid disrupting the admin while actively editing in Manage
+        if(!(tab===2 && manageOpen)) render();
+      }
+    } else {
+      // First time ever — seed Firestore with initial data
+      fsDoc.set({groups, updatedAt: Date.now()});
+    }
+    setLive(true);
+  }, err=>{ console.warn('Firestore listen failed', err); setLive(false); });
+}
 </script>
 </body>
 </html>
