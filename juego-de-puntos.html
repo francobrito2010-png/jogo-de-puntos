@@ -1,113 +1,194 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="pt">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Juego de Puntos</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&display=swap" rel="stylesheet"/>
+<title>Jogo de Pontos</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:#08080f;color:#f0f0f0;font-family:'Syne',system-ui,sans-serif;min-height:100vh;padding-bottom:80px}
+
+:root{
+  --bg-page:#08080f;
+  --bg-header-1:#0f0f1e; --bg-header-2:#14141f; --border-header:#1e1e2e;
+  --bg-card:#0f0f1a; --border-card:#1a1a2a;
+  --text-primary:#f0f0f0; --text-muted:#666; --text-dim:#444;
+  --bg-input:#141428; --border-input:#2a2a3a;
+  --bg-numpad:#1a1a2a; --bg-numpad-hover:#222238;
+  --row-border:#141428;
+  --tab-inactive-bg:#141428; --tab-inactive-color:#555;
+  --tab-active-bg:#f0f0f0; --tab-active-text:#08080f;
+  --bar-bg:#1e1e2e;
+}
+body.light{
+  --bg-page:#f3f4f9;
+  --bg-header-1:#ffffff; --bg-header-2:#f3f4f9; --border-header:#e3e5ee;
+  --bg-card:#ffffff; --border-card:#e6e8f1;
+  --text-primary:#16161f; --text-muted:#8a8fa3; --text-dim:#c2c6d6;
+  --bg-input:#eef0f7; --border-input:#d8dcec;
+  --bg-numpad:#eef0f7; --bg-numpad-hover:#e2e6f5;
+  --row-border:#eef0f7;
+  --tab-inactive-bg:#eef0f7; --tab-inactive-color:#9094aa;
+  --tab-active-bg:#16161f; --tab-active-text:#ffffff;
+  --bar-bg:#e6e8f1;
+}
+
+body{background:var(--bg-page);color:var(--text-primary);font-family:'Syne','Barlow',system-ui,sans-serif;min-height:100vh;transition:background .2s,color .2s}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
-button{font-family:'Syne',system-ui,sans-serif;cursor:pointer}
-input{font-family:'Syne',system-ui,sans-serif}
-.header{background:linear-gradient(160deg,#0f0f1e,#14141f);border-bottom:1px solid #1e1e2e;padding:20px 18px 14px;position:sticky;top:0;z-index:50}
-.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;max-width:580px;margin-left:auto;margin-right:auto}
-.app-sub{font-size:10px;letter-spacing:4px;color:#444;text-transform:uppercase}
-.app-title{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1.1}
-.header-btns{display:flex;gap:7px}
-.lang-btn{background:#1a1a2e;border:1px solid #2a2a3e;color:#888;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700}
-.reset-btn{background:none;border:1px solid #2a2a3e;color:#555;border-radius:8px;padding:5px 10px;font-size:11px}
-.tabs{display:flex;gap:6px;max-width:580px;margin:0 auto}
-.tab{flex:1;padding:8px 4px;border-radius:10px;border:none;font-size:11px;font-weight:700;letter-spacing:.3px;transition:all .2s}
-.tab.active{background:#f0f0f0;color:#08080f}
-.tab.inactive{background:#141428;color:#555}
-.content{max-width:580px;margin:0 auto;padding:18px 16px}
-.section-label{font-size:10px;letter-spacing:3px;color:#444;margin-bottom:8px}
-.group-card{background:#0f0f1a;border-radius:16px;overflow:hidden;margin-bottom:10px;transition:box-shadow .3s}
+button,input{font-family:'Syne','Barlow',system-ui,sans-serif}
+
+/* ── Header ── */
+.header{background:linear-gradient(160deg,var(--bg-header-1),var(--bg-header-2));border-bottom:1px solid var(--border-header);padding:20px 18px 14px;position:sticky;top:0;z-index:50;transition:background .2s,border-color .2s}
+.header-inner{max-width:620px;margin:0 auto}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.app-sub{font-size:10px;letter-spacing:4px;color:var(--text-dim);text-transform:uppercase;margin-bottom:2px}
+.app-title{font-size:22px;font-weight:900;letter-spacing:-1px;cursor:default;user-select:none}
+.header-btns{display:flex;gap:8px;align-items:center}
+.icon-btn{background:none;border:1px solid var(--border-input);color:var(--text-muted);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;transition:all .2s}
+.icon-btn:hover{border-color:var(--text-muted);color:var(--text-primary)}
+.tabs{display:flex;gap:6px}
+.tab{flex:1;padding:8px 4px;border-radius:10px;border:none;font-size:11px;font-weight:700;letter-spacing:.3px;transition:all .2s;cursor:pointer}
+.tab.active{background:var(--tab-active-bg);color:var(--tab-active-text)}
+.tab.inactive{background:var(--tab-inactive-bg);color:var(--tab-inactive-color)}
+.tab.inactive:hover{opacity:.8}
+
+/* ── Main ── */
+.main{max-width:620px;margin:0 auto;padding:18px 16px;width:100%}
+.section-label{font-size:10px;letter-spacing:3px;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase}
+
+/* ── Group cards ── */
+.group-card{background:var(--bg-card);border-radius:16px;overflow:hidden;margin-bottom:10px;transition:box-shadow .3s,background .2s,border-color .2s}
 .group-header{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px}
 .group-name{font-weight:800;font-size:15px}
 .group-score{font-weight:900;font-size:20px;letter-spacing:-1px}
-.bar-bg{height:3px;background:#1e1e2e;border-radius:99px;overflow:hidden;margin-top:7px}
+.bar-bg{height:3px;background:var(--bar-bg);border-radius:99px;overflow:hidden;margin-top:7px;transition:background .2s}
 .bar-fill{height:100%;border-radius:99px;transition:width .5s}
-.group-members{border-top:1px solid #1a1a2a;padding:10px 18px 14px}
-.member-row{display:flex;align-items:center;gap:8px;padding:10px 8px;border-bottom:1px solid #141428;border-radius:10px;transition:background .15s}
+.group-members{border-top:1px solid var(--row-border);padding:10px 18px 14px}
+.member-row{display:flex;align-items:center;gap:8px;padding:9px 8px;border-bottom:1px solid var(--row-border)}
 .member-name{font-size:13px;font-weight:700}
 .member-pts{font-weight:900;font-size:20px;letter-spacing:-1px}
-.player-card{background:#0f0f1a;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chevron{color:var(--text-dim);font-size:11px;flex-shrink:0}
+
+/* ── Player cards ── */
+.player-card{background:var(--bg-card);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;margin-bottom:8px;transition:background .2s,border-color .2s}
 .player-name{font-weight:700;font-size:14px}
 .player-group{font-size:10px;opacity:.7;margin-top:1px}
 .player-pts{font-weight:900;font-size:22px;letter-spacing:-1px}
-.medal{font-size:18px;flex-shrink:0}
-.rank{font-size:12px;color:#444;font-weight:700;min-width:22px;text-align:center;flex-shrink:0}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);display:flex;align-items:center;justify-content:center;z-index:400;padding:16px}
+
+/* ── Manage ── */
+.manage-card{background:var(--bg-card);border-radius:16px;border:1px solid var(--border-card);overflow:hidden;margin-bottom:10px;transition:background .2s,border-color .2s}
+.manage-header{padding:13px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.manage-body{border-top:1px solid var(--row-border);padding:10px 16px 14px}
+.manage-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--row-border)}
+.sm-btn{border:none;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:700;flex-shrink:0;cursor:pointer;transition:opacity .15s}
+.sm-btn:hover{opacity:.8}
+.pts-direct{width:60px;text-align:center;background:var(--bg-input);border-radius:8px;font-weight:800;font-size:14px;outline:none;padding:5px 4px;color:var(--text-primary);border:1px solid var(--border-input)}
+.add-row{display:flex;gap:7px;margin-top:10px}
+.add-input{flex:1;background:var(--bg-input);border:1px solid var(--border-input);border-radius:10px;color:var(--text-primary);font-size:12px;outline:none;padding:8px 12px}
+.add-btn{border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer}
+
+/* ── Overlays & Modals ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;z-index:400;padding:16px}
 .overlay.bottom{align-items:flex-end}
-.modal{background:#0f0f1a;border-radius:24px;padding:28px 22px;max-width:310px;width:100%;text-align:center}
-.modal-bottom{background:#0f0f1a;border-radius:24px;padding:26px 22px;max-width:360px;width:100%}
+.modal{background:var(--bg-card);border-radius:24px;padding:28px 22px;max-width:310px;width:100%;text-align:center}
+.modal-bottom{background:var(--bg-card);border-radius:24px;padding:26px 22px;max-width:380px;width:100%}
 .modal-icon{font-size:28px;margin-bottom:6px}
-.modal-title{font-weight:800;font-size:18px;margin-bottom:4px;color:#f0f0f0}
-.modal-sub{font-size:11px;color:#666;margin-bottom:18px;min-height:16px}
+.modal-title{font-weight:800;font-size:18px;margin-bottom:4px;color:var(--text-primary)}
+.modal-sub{font-size:11px;color:var(--text-muted);margin-bottom:18px;min-height:16px}
 .pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
 .pin-dot{width:13px;height:13px;border-radius:50%;transition:all .15s}
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.numpad-btn{padding:15px 0;border-radius:12px;border:1px solid #2a2a3a;font-size:19px;font-weight:700;color:#f0f0f0;background:#1a1a2a}
-.numpad-btn.del{color:#f87171;background:#1e1e2e}
-.numpad-btn.empty{background:transparent;border:none;cursor:default;opacity:0}
-.cancel-btn{background:none;border:none;color:#555;font-size:12px;padding:4px 8px}
-.pts-label{font-size:11px;letter-spacing:2px;color:#555;margin-bottom:4px}
+.numpad-btn{padding:15px 0;border-radius:12px;border:1px solid var(--border-input);font-size:19px;font-weight:700;color:var(--text-primary);background:var(--bg-numpad);cursor:pointer;transition:background .1s}
+.numpad-btn:hover{background:var(--bg-numpad-hover)}
+.numpad-btn.del{color:#f87171}
+.numpad-btn.empty{background:transparent;border:none;cursor:default;opacity:0;pointer-events:none}
+.cancel-btn{background:none;border:none;color:var(--text-muted);font-size:12px;padding:4px 8px;cursor:pointer}
+.cancel-btn:hover{color:var(--text-primary)}
+.forgot-btn{background:none;border:none;color:var(--text-muted);font-size:11px;text-decoration:underline;cursor:pointer;margin-top:6px;display:none}
+
+/* ── Points panel ── */
+.pts-label{font-size:11px;letter-spacing:2px;color:var(--text-muted);margin-bottom:4px}
 .pts-big{font-size:56px;font-weight:900;letter-spacing:-3px;line-height:1}
-.pts-name{font-size:14px;font-weight:700;color:#ccc;margin-top:6px}
+.pts-name{font-size:14px;font-weight:700;color:var(--text-primary);margin-top:6px}
 .pts-controls{display:flex;align-items:stretch;gap:8px;margin-bottom:14px}
-.pts-btn{width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;transition:all .15s}
-.pts-input{flex:1;text-align:center;background:#141428;border-radius:14px;font-size:24px;font-weight:900;height:64px;outline:none;padding:0 8px;min-width:0}
-.done-btn{width:100%;padding:13px;border-radius:14px;border:1px solid #2a2a3a;background:none;color:#555;font-size:13px;font-weight:600}
-.manage-card{background:#0f0f1a;border-radius:16px;border:1px solid #1a1a2a;overflow:hidden;margin-bottom:10px}
-.manage-header{padding:13px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
-.manage-body{border-top:1px solid #141428;padding:10px 16px 14px}
-.manage-row{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid #141428}
-.sm-btn{border:none;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:700;flex-shrink:0}
-.pts-direct{width:60px;text-align:center;background:#141428;border-radius:8px;font-weight:800;font-size:14px;outline:none;padding:5px 4px}
-.add-row{display:flex;gap:7px;margin-top:10px}
-.add-input{flex:1;background:#141428;border:1px solid #2a2a3a;border-radius:10px;color:#f0f0f0;font-size:12px;outline:none;padding:8px 12px}
-.add-btn{border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700}
-.chevron{color:#333;font-size:11px}
+.pts-btn{width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;cursor:pointer;transition:all .15s}
+.pts-input{flex:1;text-align:center;background:var(--bg-input);border-radius:14px;font-size:24px;font-weight:900;height:64px;outline:none;padding:0 8px;min-width:0;color:var(--text-primary)}
+.done-btn{width:100%;padding:13px;border-radius:14px;border:1px solid var(--border-input);background:none;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer}
+.done-btn:hover{color:var(--text-primary)}
+
+/* ── Pin show ── */
 .pin-show-box{border-radius:16px;padding:18px 0;margin-bottom:20px}
 .pin-show-num{font-size:48px;font-weight:900;letter-spacing:16px}
 .pin-warn{font-size:11px;color:#f87171;margin-bottom:24px;line-height:1.6}
-.confirm-ok{width:100%;padding:14px;border-radius:14px;border:none;font-size:14px;font-weight:800;color:#000}
-.reset-confirm-modal{background:#0f0f1a;border:1px solid rgba(248,113,113,.27);border-radius:22px;padding:26px;max-width:300px;width:100%;text-align:center}
-.reset-icon{font-size:34px;margin-bottom:10px}
-.reset-title{font-weight:800;font-size:17px;margin-bottom:6px}
-.reset-sub{font-size:12px;color:#666;margin-bottom:22px}
-.reset-btns{display:flex;gap:8px}
-.reset-cancel{flex:1;padding:12px;border-radius:12px;border:1px solid #2a2a3a;background:none;color:#888;font-size:13px;font-weight:600}
-.reset-ok{flex:1;padding:12px;border-radius:12px;border:none;background:#f87171;color:#fff;font-size:13px;font-weight:800}
+.confirm-ok{width:100%;padding:14px;border-radius:14px;border:none;font-size:14px;font-weight:800;color:#000;cursor:pointer}
+
+/* ── Reset confirm ── */
+.reset-confirm-modal{background:var(--bg-card);border:1px solid rgba(248,113,113,.27);border-radius:22px;padding:26px;max-width:300px;width:100%;text-align:center}
+.reset-btns{display:flex;gap:8px;margin-top:20px}
+.reset-cancel{flex:1;padding:12px;border-radius:12px;border:1px solid var(--border-input);background:none;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer}
+.reset-ok{flex:1;padding:12px;border-radius:12px;border:none;background:#f87171;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+
+/* ── Email / Recover ── */
+.email-input{width:100%;text-align:center;background:var(--bg-input);border:1px solid var(--border-input);border-radius:12px;color:var(--text-primary);font-size:13px;outline:none;padding:11px;margin-bottom:10px}
+.err{font-size:11px;color:#f87171;min-height:14px;margin-bottom:8px}
+.ok{font-size:12px;color:#4ade80;min-height:14px;margin-bottom:8px}
+
+/* ── Animations ── */
 @keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 @keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
 @keyframes slideUp{from{transform:translateY(36px);opacity:0}to{transform:translateY(0);opacity:1}}
 .anim-pop{animation:pop .25s}
 .anim-shake{animation:shk .6s}
 .anim-slide{animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+
+/* ── Desktop scaling ── */
+@media(min-width:860px){
+  .header-inner{max-width:760px}
+  .main{max-width:760px;padding:32px 24px}
+  .app-title{font-size:28px}
+  .app-sub{font-size:11px}
+  .tab{font-size:13px;padding:11px 6px}
+  .section-label{font-size:11px;margin-bottom:14px}
+  .group-header{padding:18px 24px}
+  .group-name{font-size:17px}
+  .group-score{font-size:24px}
+  .member-name{font-size:15px}
+  .member-pts{font-size:22px}
+  .group-members{padding:14px 24px 18px}
+  .member-row{padding:12px 10px}
+  .player-card{padding:16px 22px;margin-bottom:10px}
+  .player-name{font-size:16px}
+  .player-pts{font-size:26px}
+  .player-group{font-size:11px}
+  .manage-header{padding:16px 22px}
+  .manage-body{padding:14px 22px 18px}
+}
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="header">
-  <div class="header-top">
-    <div>
-      <div class="app-sub" id="appSub">Scouts</div>
-      <div class="app-title" id="appTitle">JUEGO DE PUNTOS</div>
-    </div>
-    <div class="header-btns">
-      <button class="lang-btn" onclick="toggleLang()" id="langBtn">PT</button>
-      <button class="reset-btn" onclick="showResetPin()">👑 Reset</button>
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div>
+          <div class="app-sub" id="appSub">Escoteiros</div>
+          <div class="app-title" id="appTitle" onclick="titleTap()">JOGO DE PONTOS</div>
+        </div>
+        <div class="header-btns">
+          <button class="icon-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+          <button class="icon-btn" onclick="showResetPin()">👑 Reset</button>
+        </div>
+      </div>
+      <div class="tabs" id="tabs"></div>
     </div>
   </div>
-  <div class="tabs" id="tabs"></div>
-</div>
 
-<div class="content" id="content"></div>
+  <div class="main" id="main">
+    <div id="content"></div>
+  </div>
+</div>
 
 <!-- PIN Modal -->
 <div class="overlay" id="pinOverlay" style="display:none">
@@ -116,31 +197,56 @@ input{font-family:'Syne',system-ui,sans-serif}
     <div class="modal-title" id="pinTitle"></div>
     <div class="modal-sub" id="pinSub"></div>
     <div class="pin-dots" id="pinDots"></div>
-    <div id="pinError" style="font-size:11px;color:#f87171;margin-bottom:10px;min-height:14px"></div>
+    <div class="err" id="pinError"></div>
     <div class="numpad" id="numpad"></div>
     <button class="cancel-btn" id="pinCancelBtn" onclick="closePinModal()"></button>
+    <button class="forgot-btn" id="forgotBtn" onclick="openRecoverModal()"></button>
   </div>
 </div>
 
 <!-- PIN Show Modal -->
 <div class="overlay" id="pinShowOverlay" style="display:none">
   <div class="modal anim-pop" id="pinShowModal">
-    <div style="font-size:32px;margin-bottom:10px">🔑</div>
-    <div class="modal-title">Tu PIN de Admin</div>
+    <div class="modal-icon">🔑</div>
+    <div class="modal-title" id="pinShowTitle">Seu PIN de Admin</div>
     <div class="modal-sub" id="pinShowSub"></div>
-    <div class="pin-show-box" id="pinShowBox">
-      <div class="pin-show-num" id="pinShowNum"></div>
-    </div>
+    <div class="pin-show-box" id="pinShowBox"><div class="pin-show-num" id="pinShowNum"></div></div>
     <div class="pin-warn" id="pinShowWarn"></div>
     <button class="confirm-ok" id="pinShowConfirmBtn" onclick="confirmPinShown()"></button>
   </div>
 </div>
 
+<!-- Email Entry Modal -->
+<div class="overlay" id="emailOverlay" style="display:none">
+  <div class="modal anim-pop">
+    <div class="modal-icon">✉️</div>
+    <div class="modal-title" id="emailTitle"></div>
+    <div class="modal-sub" id="emailSub"></div>
+    <input type="email" id="emailInput" class="email-input"/>
+    <div class="err" id="emailError"></div>
+    <button class="confirm-ok" id="emailContinueBtn" onclick="submitEmail()"></button>
+  </div>
+</div>
+
+<!-- Recover PIN Modal -->
+<div class="overlay" id="recoverOverlay" style="display:none">
+  <div class="modal anim-pop">
+    <div class="modal-icon">📧</div>
+    <div class="modal-title" id="recoverTitle"></div>
+    <div class="modal-sub" id="recoverSub"></div>
+    <input type="email" id="recoverInput" class="email-input"/>
+    <div class="err" id="recoverError"></div>
+    <div class="ok" id="recoverOk"></div>
+    <button class="confirm-ok" id="recoverSendBtn" style="background:#38bdf8;margin-bottom:10px" onclick="sendRecovery()"></button>
+    <button class="cancel-btn" id="recoverCancelBtn" onclick="closeRecoverModal()"></button>
+  </div>
+</div>
+
 <!-- Points Panel -->
 <div class="overlay bottom" id="ptsOverlay" style="display:none">
-  <div class="modal-bottom anim-slide" id="ptsModal">
+  <div class="modal-bottom anim-slide">
     <div style="text-align:center;margin-bottom:24px">
-      <div class="pts-label" id="ptsLabel">PUNTOS</div>
+      <div class="pts-label" id="ptsLabel"></div>
       <div class="pts-big" id="ptsBig"></div>
       <div class="pts-name" id="ptsName"></div>
     </div>
@@ -156,9 +262,9 @@ input{font-family:'Syne',system-ui,sans-serif}
 <!-- Reset Confirm -->
 <div class="overlay" id="resetOverlay" style="display:none">
   <div class="reset-confirm-modal anim-pop">
-    <div class="reset-icon">⚠️</div>
-    <div class="reset-title" id="resetTitle"></div>
-    <div class="reset-sub" id="resetSub"></div>
+    <div style="font-size:34px;margin-bottom:10px">⚠️</div>
+    <div class="modal-title" id="resetTitle"></div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px" id="resetSub"></div>
     <div class="reset-btns">
       <button class="reset-cancel" id="resetCancelBtn" onclick="closeReset()"></button>
       <button class="reset-ok" id="resetOkBtn" onclick="doReset()"></button>
@@ -167,127 +273,144 @@ input{font-family:'Syne',system-ui,sans-serif}
 </div>
 
 <script>
-// ── Data ──────────────────────────────────────────────────────────────────────
-const INIT = [
-  {id:1,name:"Patrulla Alfa",color:"#f97316",emoji:"🔥",members:[
-    {id:101,name:"Carlos M.",points:0},{id:102,name:"Sofía R.",points:0},{id:103,name:"Diego P.",points:0}]},
-  {id:2,name:"Patrulla Beta",color:"#22d3ee",emoji:"⚡",members:[
-    {id:201,name:"Ana L.",points:0},{id:202,name:"Marco T.",points:0},{id:203,name:"Valeria S.",points:0}]},
-  {id:3,name:"Patrulla Gamma",color:"#a78bfa",emoji:"🚀",members:[
-    {id:301,name:"Luis H.",points:0},{id:302,name:"Camila N.",points:0},{id:303,name:"Rodrigo V.",points:0}]},
-  {id:4,name:"Patrulla Delta",color:"#fbbf24",emoji:"💎",members:[
-    {id:401,name:"Isabella C.",points:0},{id:402,name:"Tomás B.",points:0},{id:403,name:"Natalia F.",points:0}]},
-  {id:5,name:"Patrulla Omega",color:"#34d399",emoji:"🏆",members:[
-    {id:501,name:"Pablo E.",points:0},{id:502,name:"Lucía M.",points:0},{id:503,name:"Andrés K.",points:0}]},
-];
-
-const LANG = {
-  es:{title:"JUEGO DE PUNTOS",sub:"Scouts",tabs:["Grupos","Individual","🔒 Gestionar"],
-    topGroups:"RANKING DE GRUPOS",topPlayers:"RANKING INDIVIDUAL",manageTitle:"GESTIONAR",
-    yourPoints:"PUNTOS",done:"Listo ✓",cancel:"Cancelar",
-    createPin:"Crear PIN de Juez",confirmPin:"Confirmar PIN",enterPin:"Acceso de Juez",
-    pinSub1:"Primera vez — crea un PIN de 4 dígitos",pinSub2:"Repite el PIN para confirmar",
-    pinSub3:"Ingresa el PIN de juez",
-    pinShowSub:"Anota este PIN, lo necesitarás siempre.",
-    pinShowWarn:"Guarda este número. No podrás recuperarlo si lo olvidas.",
-    pinShowConfirm:"Ya lo anoté, continuar ✓",
-    mismatch:"Los PINs no coinciden.",wrong:"PIN incorrecto.",
-    managePinTitle:"Acceso de Juez",managePinSub:"Solo el juez puede gestionar",
-    resetTitle:"Acceso Admin",resetSub:"PIN de administrador",
-    resetConfirm:"¿Reiniciar TODO?",resetConfirmSub:"Se borran todos los puntos.",
-    yesReset:"Sí, reiniciar",addMember:"Nuevo integrante...",add:"Agregar"},
-  pt:{title:"JOGO DE PONTOS",sub:"Escoteiros",tabs:["Grupos","Individual","🔒 Gerenciar"],
-    topGroups:"RANKING DE GRUPOS",topPlayers:"RANKING INDIVIDUAL",manageTitle:"GERENCIAR",
-    yourPoints:"PONTOS",done:"Pronto ✓",cancel:"Cancelar",
-    createPin:"Criar PIN do Juiz",confirmPin:"Confirmar PIN",enterPin:"Acesso do Juiz",
-    pinSub1:"Primeira vez — crie um PIN de 4 dígitos",pinSub2:"Repita o PIN para confirmar",
-    pinSub3:"Insira o PIN do juiz",
-    pinShowSub:"Anote este PIN, você precisará dele sempre.",
-    pinShowWarn:"Guarde este número. Não poderá recuperá-lo se esquecer.",
-    pinShowConfirm:"Já anotei, continuar ✓",
-    mismatch:"Os PINs não coincidem.",wrong:"PIN incorreto.",
-    managePinTitle:"Acesso do Juiz",managePinSub:"Só o juiz pode gerenciar",
-    resetTitle:"Acesso Admin",resetSub:"PIN de administrador",
-    resetConfirm:"Reiniciar TUDO?",resetConfirmSub:"Todos os pontos serão apagados.",
-    yesReset:"Sim, reiniciar",addMember:"Novo integrante...",add:"Adicionar"},
+// ── i18n (Português) ────────────────────────────────────────────────────────
+const T = {
+  title:"JOGO DE PONTOS",sub:"Escoteiros",
+  tabs:["Grupos","Individual","🔒 Gerenciar"],
+  topGroups:"RANKING DE GRUPOS",topPlayers:"RANKING INDIVIDUAL",manageTitle:"GERENCIAR",
+  yourPoints:"PONTOS",done:"Pronto ✓",cancel:"Cancelar",
+  createPin:"Criar PIN de Admin",confirmPin:"Confirmar PIN",enterPin:"Acesso Admin",
+  pinSub1:"Primeira vez — crie um PIN de 4 dígitos",
+  pinSub2:"Repita o PIN para confirmar",pinSub3:"Insira o PIN de administrador",
+  pinShowTitle:"Seu PIN de Admin",
+  pinShowSub:"Anote este PIN, você precisará dele sempre.",
+  pinShowWarn:"Guarde este número. Não poderá recuperá-lo se esquecer.",
+  pinShowConfirm:"Já anotei, continuar ✓",
+  mismatch:"Os PINs não coincidem.",wrong:"PIN incorreto.",
+  resetTitle:"Reiniciar TUDO?",resetSub:"Todos os pontos serão apagados.",
+  yesReset:"Sim, reiniciar",
+  addMember:"Novo integrante...",add:"Adicionar",
+  forgotPin:"Esqueceu seu PIN?",
+  emailLabel:"Seu email (para recuperar o PIN)",
+  emailPlaceholder:"seu@email.com",emailInvalid:"Email inválido.",
+  continueBtn:"Continuar",
+  recoverTitle:"Recuperar PIN",recoverSub:"Digite o email que você registrou",
+  recoverSend:"Enviar PIN por email",recoverSent:"📩 PIN enviado. Verifique seu email.",
+  recoverNoEmail:"Nenhum email registrado.",
+  recoverMismatch:"Esse email não coincide.",recoverSending:"Enviando...",
+  recoverError:"Não foi possível enviar. Tente novamente.",
+  factoryReset:"Apagar PIN, email e pontos? Isso deixa o app como novo.",
+  factoryDone:"✅ Pronto. O app está como novo.",
 };
 
+// ── EmailJS (preencha suas chaves) ─────────────────────────────────────────────
+const EMAILJS_SERVICE_ID  = "TU_SERVICE_ID";
+const EMAILJS_TEMPLATE_ID = "TU_TEMPLATE_ID";
+const EMAILJS_PUBLIC_KEY  = "TU_PUBLIC_KEY";
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const INIT = [
+  {id:1,name:"Patrulla Alfa",  color:"#f97316",emoji:"🔥",members:[
+    {id:101,name:"Carlos M.",  points:0},
+    {id:102,name:"Sofía R.",   points:0},
+    {id:103,name:"Diego P.",   points:0}]},
+  {id:2,name:"Patrulla Beta",  color:"#22d3ee",emoji:"⚡",members:[
+    {id:201,name:"Ana L.",     points:0},
+    {id:202,name:"Marco T.",   points:0},
+    {id:203,name:"Valeria S.", points:0}]},
+  {id:3,name:"Patrulla Gamma", color:"#a78bfa",emoji:"🚀",members:[
+    {id:301,name:"Luis H.",    points:0},
+    {id:302,name:"Camila N.",  points:0},
+    {id:303,name:"Rodrigo V.", points:0}]},
+  {id:4,name:"Patrulla Delta", color:"#fbbf24",emoji:"💎",members:[
+    {id:401,name:"Isabella C.",points:0},
+    {id:402,name:"Tomás B.",   points:0},
+    {id:403,name:"Natalia F.", points:0}]},
+  {id:5,name:"Patrulla Omega", color:"#34d399",emoji:"🏆",members:[
+    {id:501,name:"Pablo E.",   points:0},
+    {id:502,name:"Lucía M.",   points:0},
+    {id:503,name:"Andrés K.",  points:0}]},
+];
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function sto(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
+function sav(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
 // ── State ─────────────────────────────────────────────────────────────────────
-let lang = sto('sc_lang','es');
-let groups = sto('sc_groups', JSON.parse(JSON.stringify(INIT)));
-let judgePin = sto('sc_judge', null);
-let tab = 0;
+let groups    = sto('sc_groups', JSON.parse(JSON.stringify(INIT)));
+let adminPin  = sto('sc_pin', null);
+let userEmail = sto('sc_email', null);
+let theme     = sto('sc_theme','dark');
+let tab       = 0;
 let openGroup = null;
-let openManage = null;
+let openManage= null;
 let editingId = null;
-let manageOpen = false;
+let manageOpen= false;
 
 // PIN state
-let pinStep = 'enter'; // create|confirm|enter|show
-let pinDigits = [];
-let pinFirst = null;
-let pinColor = '#f97316';
-let pinCallback = null;
-let pinIsNew = false;
-let pendingMember = null;
-let activeUser = null;
+let pinDigits=[], pinStep='enter', pinFirst=null, pinColor='#f97316';
+let pinCallback=null, pinIsNew=false;
+let activeUser=null;
 
-function sto(k, def) {
-  try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; }
+function gt(g){ return g.members.reduce((s,m)=>s+m.points,0); }
+function sortedGroups(){ return [...groups].sort((a,b)=>gt(b)-gt(a)); }
+function allPlayers(){
+  return groups.flatMap(g=>g.members.map(m=>({...m,gName:g.name,gColor:g.color,gEmoji:g.emoji,gId:g.id})))
+    .sort((a,b)=>b.points-a.points);
 }
-function sav(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+function medalOf(i){ return i===0?'🥇':i===1?'🥈':i===2?'🥉':null; }
 
-function t() { return LANG[lang]; }
-function gt(g) { return g.members.reduce((s,m) => s+m.points, 0); }
-function sortedGroups() { return [...groups].sort((a,b) => gt(b)-gt(a)); }
-function allPlayers() {
-  return groups.flatMap(g => g.members.map(m => ({...m,gName:g.name,gColor:g.color,gEmoji:g.emoji,gId:g.id})))
-    .sort((a,b) => b.points-a.points);
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function applyTheme(){
+  document.body.classList.toggle('light', theme==='light');
+  document.getElementById('themeBtn').textContent = theme==='light' ? '☀️' : '🌙';
+}
+function toggleTheme(){
+  theme = theme==='light' ? 'dark' : 'light';
+  sav('sc_theme', theme);
+  applyTheme();
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
-function render() {
-  const L = t();
-  document.getElementById('appTitle').textContent = L.title;
-  document.getElementById('appSub').textContent = L.sub;
-  document.getElementById('langBtn').textContent = lang==='es'?'PT':'ES';
+function render(){
+  document.getElementById('appTitle').textContent = T.title;
+  document.getElementById('appSub').textContent = T.sub;
 
-  // Tabs
-  const tabsEl = document.getElementById('tabs');
-  tabsEl.innerHTML = L.tabs.map((label,i) =>
+  document.getElementById('tabs').innerHTML = T.tabs.map((label,i)=>
     `<button class="tab ${tab===i?'active':'inactive'}" onclick="clickTab(${i})">${label}</button>`
   ).join('');
 
-  // Content
   const el = document.getElementById('content');
-  if(tab===0) renderGroups(el, L);
-  else if(tab===1) renderPlayers(el, L);
-  else if(tab===2 && manageOpen) renderManage(el, L);
-  else el.innerHTML = '';
+  if(tab===0) renderGroups(el);
+  else if(tab===1) renderPlayers(el);
+  else if(tab===2 && manageOpen) renderManage(el);
+  else if(tab===2 && !manageOpen) el.innerHTML='';
 }
 
-function renderGroups(el, L) {
+function renderGroups(el){
   const ranked = sortedGroups();
-  const maxT = gt(ranked[0]) || 1;
-  el.innerHTML = `<div class="section-label">${L.topGroups}</div>` +
-    ranked.map((g,i) => {
-      const tot = gt(g);
-      const pct = (tot/maxT*100).toFixed(1);
-      const border = i===0 ? `1px solid ${g.color}44` : '1px solid #1a1a2a';
-      const shadow = i===0 ? `0 0 24px ${g.color}18` : 'none';
-      const open = openGroup===g.id;
-      let members = '';
-      if(open) {
-        members = `<div class="group-members">` +
-          g.members.map(m => `
-            <div class="member-row" id="mrow-${m.id}">
+  const maxT = gt(ranked[0])||1;
+  el.innerHTML = `<div class="section-label">${T.topGroups}</div>` +
+    ranked.map((g,i)=>{
+      const tot=gt(g), pct=(tot/maxT*100).toFixed(1);
+      const border=i===0?`1px solid ${g.color}44`:'1px solid var(--border-card)';
+      const shadow=i===0?`0 0 24px ${g.color}18`:'none';
+      const open=openGroup===g.id;
+      let members='';
+      if(open){
+        members=`<div class="group-members">`+
+          g.members.map(m=>`
+            <div class="member-row">
               <div style="flex:1"><div class="member-name">${m.name}</div></div>
               <div class="member-pts" style="color:${g.color}">${m.points}</div>
-            </div>`).join('') + `</div>`;
+            </div>`).join('')+`</div>`;
       }
+      const medal=medalOf(i);
+      const rankEl=medal?`<span style="font-size:18px;flex-shrink:0">${medal}</span>`
+        :`<span style="font-size:12px;color:var(--text-dim);font-weight:700;min-width:22px;text-align:center;flex-shrink:0">#${i+1}</span>`;
       return `<div class="group-card" style="border:${border};box-shadow:${shadow}">
         <div class="group-header" onclick="toggleGroup(${g.id})">
-          <span style="font-size:${i<3?18:12}px;flex-shrink:0">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span>
+          ${rankEl}
           <div style="flex:1;min-width:0">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <span class="group-name" style="color:${g.color}">${g.emoji} ${g.name}</span>
@@ -300,14 +423,15 @@ function renderGroups(el, L) {
     }).join('');
 }
 
-function renderPlayers(el, L) {
-  const players = allPlayers();
-  el.innerHTML = `<div class="section-label">${L.topPlayers}</div>` +
-    players.map((m,i) => {
-      const border = i===0 ? `1px solid ${m.gColor}44` : '1px solid #1a1a2a';
-      const shadow = i===0 ? `0 0 20px ${m.gColor}15` : 'none';
-      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
-      const rankEl = medal ? `<span class="medal">${medal}</span>` : `<span class="rank">#${i+1}</span>`;
+function renderPlayers(el){
+  const players=allPlayers();
+  el.innerHTML=`<div class="section-label">${T.topPlayers}</div>`+
+    players.map((m,i)=>{
+      const border=i===0?`1px solid ${m.gColor}44`:'1px solid var(--border-card)';
+      const shadow=i===0?`0 0 20px ${m.gColor}15`:'none';
+      const medal=medalOf(i);
+      const rankEl=medal?`<span style="font-size:18px;flex-shrink:0">${medal}</span>`
+        :`<span style="font-size:12px;color:var(--text-dim);font-weight:700;min-width:22px;text-align:center;flex-shrink:0">#${i+1}</span>`;
       return `<div class="player-card" style="border:${border};box-shadow:${shadow}">
         ${rankEl}
         <div style="flex:1">
@@ -319,31 +443,31 @@ function renderPlayers(el, L) {
     }).join('');
 }
 
-function renderManage(el, L) {
-  el.innerHTML = `<div class="section-label">${L.manageTitle}</div>` +
-    groups.map(g => {
-      const open = openManage===g.id;
-      let body = '';
-      if(open) {
-        const rows = g.members.map(m => {
-          if(editingId===m.id) {
+function renderManage(el){
+  el.innerHTML=`<div class="section-label">${T.manageTitle}</div>`+
+    groups.map(g=>{
+      const open=openManage===g.id;
+      let body='';
+      if(open){
+        const rows=g.members.map(m=>{
+          if(editingId===m.id){
             return `<div class="manage-row">
-              <input id="editInput-${m.id}" value="${m.name}" style="flex:1;background:#141428;border:1px solid ${g.color}44;border-radius:8px;color:#f0f0f0;font-size:12px;outline:none;padding:6px 10px"/>
-              <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="saveMemberName(${g.id},${m.id})">✓</button>
-              <button class="sm-btn" style="background:#1a1a2e;color:#666" onclick="cancelEdit()">✕</button>
+              <input id="ei-${m.id}" value="${m.name}" style="flex:1;background:var(--bg-input);border:1px solid ${g.color}44;border-radius:8px;color:var(--text-primary);font-size:12px;outline:none;padding:6px 10px"/>
+              <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="saveName(${g.id},${m.id})">✓</button>
+              <button class="sm-btn" style="background:var(--bg-input);color:var(--text-muted)" onclick="cancelEdit()">✕</button>
             </div>`;
           }
           return `<div class="manage-row">
             <div style="flex:1"><div style="font-size:13px;font-weight:600">${m.name}</div></div>
-            <input type="number" min="0" value="${m.points}" class="pts-direct" style="border:1px solid ${g.color}33;color:${g.color}" onchange="setDirect(${g.id},${m.id},this.value)"/>
-            <button class="sm-btn" style="background:#1a1a2e;color:#888" onclick="startEdit(${m.id})">✏️</button>
-            <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="openPtsFor(${g.id},${m.id})">±</button>
+            <input type="number" min="0" value="${m.points}" class="pts-direct" style="border-color:${g.color}33;color:${g.color}" onchange="setDirect(${g.id},${m.id},this.value)"/>
+            <button class="sm-btn" style="background:var(--bg-input);color:var(--text-muted)" onclick="startEdit(${m.id})">✏️</button>
+            <button class="sm-btn" style="background:${g.color}22;color:${g.color}" onclick="openPtsPanel(${g.id},${m.id})">±</button>
           </div>`;
         }).join('');
-        body = `<div class="manage-body">${rows}
+        body=`<div class="manage-body">${rows}
           <div class="add-row">
-            <input class="add-input" id="addInput-${g.id}" placeholder="${L.addMember}" onkeydown="if(event.key==='Enter')addMember(${g.id})"/>
-            <button class="add-btn" style="background:${g.color}22;color:${g.color}" onclick="addMember(${g.id})">${L.add}</button>
+            <input class="add-input" id="ai-${g.id}" placeholder="${T.addMember}" onkeydown="if(event.key==='Enter')addMember(${g.id})"/>
+            <button class="add-btn" style="background:${g.color}22;color:${g.color}" onclick="addMember(${g.id})">${T.add}</button>
           </div></div>`;
       }
       return `<div class="manage-card">
@@ -355,177 +479,248 @@ function renderManage(el, L) {
 }
 
 // ── Navigation ────────────────────────────────────────────────────────────────
-function clickTab(i) {
-  manageOpen = false;
-  if(i===2) { openManagePinModal(); }
-  else { tab=i; render(); }
+function clickTab(i){
+  if(i===2){
+    manageOpen=false;
+    openManagePinModal();
+  } else {
+    manageOpen=false;
+    tab=i;
+    render();
+  }
 }
+function toggleGroup(id){openGroup=openGroup===id?null:id;render();}
+function toggleManage(id){openManage=openManage===id?null:id;render();}
 
-function toggleGroup(id) { openGroup = openGroup===id ? null : id; render(); }
-function toggleManage(id) { openManage = openManage===id ? null : id; render(); }
-function toggleLang() { lang = lang==='es'?'pt':'es'; sav('sc_lang',lang); render(); }
-
-// ── Member editing ────────────────────────────────────────────────────────────
-function startEdit(mId) { editingId=mId; render(); setTimeout(()=>{const el=document.getElementById('editInput-'+mId);if(el)el.focus();},50); }
-function cancelEdit() { editingId=null; render(); }
-function saveMemberName(gId,mId) {
-  const el = document.getElementById('editInput-'+mId);
-  if(!el||!el.value.trim()) return;
-  groups = groups.map(g => g.id===gId ? {...g,members:g.members.map(m => m.id===mId?{...m,name:el.value.trim()}:m)} : g);
-  sav('sc_groups',groups); editingId=null; render();
+// ── Editing ───────────────────────────────────────────────────────────────────
+function startEdit(mId){editingId=mId;render();setTimeout(()=>{const e=document.getElementById('ei-'+mId);if(e)e.focus();},50);}
+function cancelEdit(){editingId=null;render();}
+function saveName(gId,mId){
+  const e=document.getElementById('ei-'+mId);
+  if(!e||!e.value.trim())return;
+  groups=groups.map(g=>g.id===gId?{...g,members:g.members.map(m=>m.id===mId?{...m,name:e.value.trim()}:m)}:g);
+  sav('sc_groups',groups);editingId=null;render();
 }
-function addMember(gId) {
-  const el = document.getElementById('addInput-'+gId);
-  if(!el||!el.value.trim()) return;
-  const nm = {id:Date.now(),name:el.value.trim(),points:0};
-  groups = groups.map(g => g.id===gId ? {...g,members:[...g.members,nm]} : g);
-  sav('sc_groups',groups); render();
+function addMember(gId){
+  const e=document.getElementById('ai-'+gId);
+  if(!e||!e.value.trim())return;
+  groups=groups.map(g=>g.id===gId?{...g,members:[...g.members,{id:Date.now(),name:e.value.trim(),points:0}]}:g);
+  sav('sc_groups',groups);render();
 }
-function setDirect(gId,mId,val) {
-  const n = parseInt(val,10);
-  if(isNaN(n)||n<0) return;
-  groups = groups.map(g => g.id===gId ? {...g,members:g.members.map(m => m.id===mId?{...m,points:n}:m)} : g);
+function setDirect(gId,mId,val){
+  const n=parseInt(val,10);if(isNaN(n)||n<0)return;
+  groups=groups.map(g=>g.id===gId?{...g,members:g.members.map(m=>m.id===mId?{...m,points:n}:m)}:g);
   sav('sc_groups',groups);
-}
-function openPtsFor(gId,mId) {
-  const g = groups.find(x=>x.id===gId);
-  const m = g.members.find(x=>x.id===mId);
-  pendingMember = {member:m,gColor:g.color,gId:gId};
-  openJudgePin();
 }
 
 // ── Points Panel ──────────────────────────────────────────────────────────────
-function openPtsPanel(member, color, gId) {
-  activeUser = {member, color, gId};
-  const L = t();
-  document.getElementById('ptsLabel').textContent = L.yourPoints;
-  document.getElementById('ptsBig').textContent = member.points;
-  document.getElementById('ptsBig').style.color = color;
-  document.getElementById('ptsName').textContent = member.name;
-  document.getElementById('ptsAmt').value = '1';
-  document.getElementById('ptsAmt').style.color = color;
-  document.getElementById('ptsAmt').style.border = `2px solid ${color}55`;
-  document.getElementById('ptsMinusBtn').style.cssText = `width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;border:2px solid #2a1a1a;background:#1e1818;color:#f87171;transition:all .15s`;
-  document.getElementById('ptsPlusBtn').style.cssText = `width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;border:2px solid ${color}44;background:${color}18;color:${color};transition:all .15s`;
-  document.getElementById('ptsDoneBtn').textContent = L.done;
-  document.getElementById('ptsOverlay').style.display = 'flex';
+function openPtsPanel(gId,mId){
+  const g=groups.find(x=>x.id===gId);
+  const m=g.members.find(x=>x.id===mId);
+  activeUser={member:{...m},gColor:g.color,gId:gId};
+  document.getElementById('ptsLabel').textContent=T.yourPoints;
+  document.getElementById('ptsBig').textContent=m.points;
+  document.getElementById('ptsBig').style.color=g.color;
+  document.getElementById('ptsName').textContent=m.name;
+  document.getElementById('ptsAmt').value='1';
+  document.getElementById('ptsAmt').style.color=g.color;
+  document.getElementById('ptsAmt').style.border=`2px solid ${g.color}55`;
+  document.getElementById('ptsMinusBtn').style.cssText=`width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;cursor:pointer;border:2px solid #2a1a1a;background:#1e1818;color:#f87171;transition:all .15s`;
+  document.getElementById('ptsPlusBtn').style.cssText=`width:64px;height:64px;border-radius:14px;font-size:28px;font-weight:900;flex-shrink:0;cursor:pointer;border:2px solid ${g.color}44;background:${g.color}18;color:${g.color};transition:all .15s`;
+  document.getElementById('ptsDoneBtn').textContent=T.done;
+  document.getElementById('ptsOverlay').style.display='flex';
 }
-function handlePts(sign) {
-  const amt = parseInt(document.getElementById('ptsAmt').value,10);
-  if(!amt||amt<=0||!activeUser) return;
-  const delta = sign*amt;
-  groups = groups.map(g => g.id===activeUser.gId ? {...g,members:g.members.map(m => m.id===activeUser.member.id?{...m,points:Math.max(0,m.points+delta)}:m)} : g);
+function handlePts(sign){
+  const amt=parseInt(document.getElementById('ptsAmt').value,10);
+  if(!amt||amt<=0||!activeUser)return;
+  const delta=sign*amt;
+  groups=groups.map(g=>g.id===activeUser.gId?{...g,members:g.members.map(m=>m.id===activeUser.member.id?{...m,points:Math.max(0,m.points+delta)}:m)}:g);
   sav('sc_groups',groups);
-  activeUser.member.points = Math.max(0, activeUser.member.points+delta);
-  document.getElementById('ptsBig').textContent = activeUser.member.points;
+  activeUser.member.points=Math.max(0,activeUser.member.points+delta);
+  document.getElementById('ptsBig').textContent=activeUser.member.points;
 }
-function closePts() { document.getElementById('ptsOverlay').style.display='none'; activeUser=null; render(); }
+function closePts(){document.getElementById('ptsOverlay').style.display='none';activeUser=null;render();}
 
 // ── PIN System ────────────────────────────────────────────────────────────────
-function buildNumpad() {
-  const keys = [1,2,3,4,5,6,7,8,9,'',0,'⌫'];
-  document.getElementById('numpad').innerHTML = keys.map(k => {
-    if(k==='') return `<button class="numpad-btn empty" disabled></button>`;
-    if(k==='⌫') return `<button class="numpad-btn del" onclick="pinDel()">⌫</button>`;
-    return `<button class="numpad-btn" onclick="pinPress('${k}')">${k}</button>`;
+function buildNumpad(){
+  document.getElementById('numpad').innerHTML=[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(k=>{
+    if(k==='')return`<button class="numpad-btn empty" disabled></button>`;
+    if(k==='⌫')return`<button class="numpad-btn del" onclick="pinDel()">⌫</button>`;
+    return`<button class="numpad-btn" onclick="pinPress('${k}')">${k}</button>`;
   }).join('');
 }
-function renderDots(len, filled, color) {
-  document.getElementById('pinDots').innerHTML = Array.from({length:len}).map((_,i) => {
-    const filled_i = i<filled;
-    return `<div class="pin-dot" style="background:${filled_i?color:'transparent'};border:2px solid ${filled_i?color:'#444'};transform:${filled_i?'scale(1.25)':'scale(1)'}"></div>`;
+function renderDots(filled){
+  document.getElementById('pinDots').innerHTML=Array.from({length:4}).map((_,i)=>{
+    const on=i<filled;
+    return`<div class="pin-dot" style="background:${on?pinColor:'transparent'};border:2px solid ${on?pinColor:'var(--border-input)'};transform:${on?'scale(1.25)':'scale(1)'}"></div>`;
   }).join('');
 }
-function openPinModal(icon, title, sub, color, isNew, savedPin, callback, showCancel) {
-  pinColor = color; pinCallback = callback; pinIsNew = isNew;
-  pinDigits = []; pinStep = isNew?'create':'enter'; pinFirst = null;
-  document.getElementById('pinIcon').textContent = icon;
-  document.getElementById('pinTitle').textContent = isNew ? t().createPin : title;
-  document.getElementById('pinSub').textContent = isNew ? t().pinSub1 : sub;
-  document.getElementById('pinError').textContent = '';
-  document.getElementById('pinCancelBtn').textContent = t().cancel;
-  document.getElementById('pinCancelBtn').style.display = showCancel?'block':'none';
-  buildNumpad();
-  renderDots(4, 0, color);
-  document.getElementById('pinOverlay').style.display = 'flex';
-  document.getElementById('pinModal').className = 'modal anim-pop';
+function openPinModal(icon,title,sub,color,isNew,callback,showCancel){
+  pinColor=color;pinCallback=callback;pinIsNew=isNew;
+  pinDigits=[];pinStep=isNew?'create':'enter';pinFirst=null;
+  document.getElementById('pinIcon').textContent=icon;
+  document.getElementById('pinTitle').textContent=isNew?T.createPin:title;
+  document.getElementById('pinSub').textContent=isNew?T.pinSub1:sub;
+  document.getElementById('pinError').textContent='';
+  document.getElementById('pinCancelBtn').textContent=T.cancel;
+  document.getElementById('pinCancelBtn').style.display=showCancel?'block':'none';
+  document.getElementById('forgotBtn').textContent=T.forgotPin;
+  document.getElementById('forgotBtn').style.display=(!isNew&&adminPin)?'block':'none';
+  document.getElementById('pinModal').style.border=`1px solid ${color}44`;
+  document.getElementById('pinModal').style.boxShadow=`0 0 50px ${color}20`;
+  buildNumpad();renderDots(0);
+  document.getElementById('pinOverlay').style.display='flex';
+  document.getElementById('pinModal').className='modal anim-pop';
 }
-function pinPress(d) {
-  if(pinDigits.length>=4) return;
-  pinDigits.push(d);
-  renderDots(4, pinDigits.length, pinColor);
-  document.getElementById('pinError').textContent = '';
-  if(pinDigits.length===4) {
-    const code = pinDigits.join('');
+function pinPress(d){
+  if(pinDigits.length>=4)return;
+  pinDigits.push(d);renderDots(pinDigits.length);
+  document.getElementById('pinError').textContent='';
+  if(pinDigits.length===4){
+    const code=pinDigits.join('');
     setTimeout(()=>{
-      if(!pinIsNew) {
-        if(code===judgePin) { closePinModal(); pinCallback(null); }
-        else { pinShake(t().wrong); }
-      } else if(pinStep==='create') {
-        pinFirst=code; pinDigits=[]; pinStep='confirm';
-        document.getElementById('pinTitle').textContent = t().confirmPin;
-        document.getElementById('pinSub').textContent = t().pinSub2;
-        renderDots(4,0,pinColor);
+      if(!pinIsNew){
+        if(code===adminPin){closePinModal();pinCallback();}
+        else pinShake(T.wrong);
+      } else if(pinStep==='create'){
+        pinFirst=code;pinDigits=[];pinStep='confirm';
+        document.getElementById('pinTitle').textContent=T.confirmPin;
+        document.getElementById('pinSub').textContent=T.pinSub2;
+        renderDots(0);
       } else {
-        if(code===pinFirst) {
+        if(code===pinFirst){
+          window._newPin=code;
           closePinModal();
-          showPinCreated(code);
-        } else { pinShake(t().mismatch); pinStep='create'; pinFirst=null; document.getElementById('pinTitle').textContent=t().createPin; document.getElementById('pinSub').textContent=t().pinSub1; }
+          if(userEmail){showPinCreated(code);}
+          else{openEmailModal();}
+        } else {
+          pinShake(T.mismatch);pinStep='create';pinFirst=null;
+          document.getElementById('pinTitle').textContent=T.createPin;
+          document.getElementById('pinSub').textContent=T.pinSub1;
+        }
       }
     },160);
   }
 }
-function pinDel() { if(pinDigits.length>0){pinDigits.pop(); renderDots(4,pinDigits.length,pinColor); document.getElementById('pinError').textContent='';} }
-function pinShake(msg) {
-  pinDigits=[];
-  renderDots(4,0,pinColor);
+function pinDel(){if(pinDigits.length>0){pinDigits.pop();renderDots(pinDigits.length);document.getElementById('pinError').textContent='';}}
+function pinShake(msg){
+  pinDigits=[];renderDots(0);
   document.getElementById('pinError').textContent=msg;
-  const m = document.getElementById('pinModal');
-  m.className='modal anim-shake';
-  setTimeout(()=>m.className='modal',700);
+  const m=document.getElementById('pinModal');
+  m.className='modal anim-shake';setTimeout(()=>m.className='modal',700);
 }
-function closePinModal() { document.getElementById('pinOverlay').style.display='none'; }
+function closePinModal(){document.getElementById('pinOverlay').style.display='none';}
 
-function showPinCreated(code) {
-  const L = t();
-  document.getElementById('pinShowSub').textContent = L.pinShowSub;
-  document.getElementById('pinShowNum').textContent = code;
-  document.getElementById('pinShowNum').style.color = pinColor;
-  document.getElementById('pinShowBox').style.background = pinColor+'18';
-  document.getElementById('pinShowBox').style.border = `2px solid ${pinColor}66`;
-  document.getElementById('pinShowWarn').textContent = '⚠️ '+L.pinShowWarn;
-  document.getElementById('pinShowConfirmBtn').textContent = L.pinShowConfirm;
-  document.getElementById('pinShowConfirmBtn').style.background = pinColor;
-  document.getElementById('pinShowOverlay').style.display = 'flex';
-  // store temporarily
-  window._pendingNewPin = code;
+// ── PIN Show ──────────────────────────────────────────────────────────────────
+function showPinCreated(code){
+  document.getElementById('pinShowTitle').textContent=T.pinShowTitle;
+  document.getElementById('pinShowSub').textContent=T.pinShowSub;
+  document.getElementById('pinShowNum').textContent=code;
+  document.getElementById('pinShowNum').style.color=pinColor;
+  document.getElementById('pinShowBox').style.background=pinColor+'18';
+  document.getElementById('pinShowBox').style.border=`2px solid ${pinColor}66`;
+  document.getElementById('pinShowWarn').textContent='⚠️ '+T.pinShowWarn;
+  document.getElementById('pinShowConfirmBtn').textContent=T.pinShowConfirm;
+  document.getElementById('pinShowConfirmBtn').style.background=pinColor;
+  document.getElementById('pinShowOverlay').style.display='flex';
 }
-function confirmPinShown() {
-  const code = window._pendingNewPin;
-  judgePin = code; sav('sc_judge',code);
+function confirmPinShown(){
+  const code=window._newPin;
+  adminPin=code;sav('sc_pin',code);
   document.getElementById('pinShowOverlay').style.display='none';
-  if(pinCallback) pinCallback(code);
+  if(pinCallback)pinCallback();
 }
 
-// ── PIN entry points ──────────────────────────────────────────────────────────
-function openJudgePin() {
-  openPinModal('⚖️', t().enterPin, t().pinSub3, pendingMember.gColor, !judgePin, judgePin,
-    ()=>{ const {member,gColor,gId}=pendingMember; pendingMember=null; openPtsPanel(member,gColor,gId); }, true);
+// ── Email step ────────────────────────────────────────────────────────────────
+function openEmailModal(){
+  document.getElementById('emailTitle').textContent=T.emailLabel;
+  document.getElementById('emailSub').textContent='';
+  document.getElementById('emailInput').placeholder=T.emailPlaceholder;
+  document.getElementById('emailInput').value='';
+  document.getElementById('emailError').textContent='';
+  document.getElementById('emailContinueBtn').textContent=T.continueBtn;
+  document.getElementById('emailContinueBtn').style.background=pinColor;
+  document.getElementById('emailOverlay').style.display='flex';
 }
-function openManagePinModal() {
-  openPinModal('🛡️', t().managePinTitle, t().managePinSub, '#38bdf8', !judgePin, judgePin,
-    ()=>{ manageOpen=true; tab=2; render(); }, true);
+function submitEmail(){
+  const val=document.getElementById('emailInput').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){document.getElementById('emailError').textContent=T.emailInvalid;return;}
+  userEmail=val;sav('sc_email',val);
+  document.getElementById('emailOverlay').style.display='none';
+  showPinCreated(window._newPin);
 }
-function showResetPin() {
-  openPinModal('👑', t().resetTitle, t().resetSub, '#e879f9', !judgePin, judgePin,
-    ()=>{ document.getElementById('resetTitle').textContent=t().resetConfirm; document.getElementById('resetSub').textContent=t().resetConfirmSub; document.getElementById('resetCancelBtn').textContent=t().cancel; document.getElementById('resetOkBtn').textContent=t().yesReset; document.getElementById('resetOverlay').style.display='flex'; }, true);
+
+// ── Recover PIN ───────────────────────────────────────────────────────────────
+function openRecoverModal(){
+  closePinModal();
+  document.getElementById('recoverTitle').textContent=T.recoverTitle;
+  document.getElementById('recoverSub').textContent=T.recoverSub;
+  document.getElementById('recoverInput').placeholder=T.emailPlaceholder;
+  document.getElementById('recoverInput').value='';
+  document.getElementById('recoverError').textContent='';
+  document.getElementById('recoverOk').textContent='';
+  document.getElementById('recoverSendBtn').textContent=T.recoverSend;
+  document.getElementById('recoverCancelBtn').textContent=T.cancel;
+  document.getElementById('recoverOverlay').style.display='flex';
 }
-function closeReset() { document.getElementById('resetOverlay').style.display='none'; }
-function doReset() { groups=JSON.parse(JSON.stringify(INIT)); sav('sc_groups',groups); closeReset(); tab=0; manageOpen=false; render(); }
+function closeRecoverModal(){document.getElementById('recoverOverlay').style.display='none';}
+function sendRecovery(){
+  const val=document.getElementById('recoverInput').value.trim();
+  document.getElementById('recoverError').textContent='';
+  document.getElementById('recoverOk').textContent='';
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){document.getElementById('recoverError').textContent=T.emailInvalid;return;}
+  if(!userEmail){document.getElementById('recoverError').textContent=T.recoverNoEmail;return;}
+  if(val.toLowerCase()!==userEmail.toLowerCase()){document.getElementById('recoverError').textContent=T.recoverMismatch;return;}
+  if(typeof emailjs==='undefined'||EMAILJS_PUBLIC_KEY==='TU_PUBLIC_KEY'){document.getElementById('recoverError').textContent=T.recoverError;return;}
+  document.getElementById('recoverSendBtn').textContent=T.recoverSending;
+  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:userEmail,pin:adminPin})
+    .then(()=>{document.getElementById('recoverOk').textContent=T.recoverSent;document.getElementById('recoverSendBtn').textContent=T.recoverSend;})
+    .catch(()=>{document.getElementById('recoverError').textContent=T.recoverError;document.getElementById('recoverSendBtn').textContent=T.recoverSend;});
+}
+
+// ── Manage PIN ────────────────────────────────────────────────────────────────
+function openManagePinModal(){
+  openPinModal('🛡️',T.enterPin,T.pinSub3,'#38bdf8',!adminPin,()=>{
+    manageOpen=true;tab=2;render();
+  },true);
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function showResetPin(){
+  openPinModal('👑',T.enterPin,T.pinSub3,'#e879f9',!adminPin,()=>{
+    document.getElementById('resetTitle').textContent=T.resetTitle;
+    document.getElementById('resetSub').textContent=T.resetSub;
+    document.getElementById('resetCancelBtn').textContent=T.cancel;
+    document.getElementById('resetOkBtn').textContent=T.yesReset;
+    document.getElementById('resetOverlay').style.display='flex';
+  },true);
+}
+function closeReset(){document.getElementById('resetOverlay').style.display='none';}
+function doReset(){
+  groups=JSON.parse(JSON.stringify(INIT));sav('sc_groups',groups);
+  closeReset();tab=0;manageOpen=false;openGroup=null;openManage=null;render();
+}
+
+// ── Factory reset (tap title 5 times) ─────────────────────────────────────────
+let _taps=0,_tapTimer=null;
+function titleTap(){
+  _taps++;clearTimeout(_tapTimer);
+  _tapTimer=setTimeout(()=>_taps=0,1500);
+  if(_taps>=5){
+    _taps=0;
+    if(confirm(T.factoryReset)){
+      ['sc_pin','sc_email','sc_groups'].forEach(k=>localStorage.removeItem(k));
+      adminPin=null;userEmail=null;
+      groups=JSON.parse(JSON.stringify(INIT));
+      tab=0;manageOpen=false;openGroup=null;openManage=null;render();
+      alert(T.factoryDone);
+    }
+  }
+}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+applyTheme();
 render();
 </script>
 </body>
 </html>
-
